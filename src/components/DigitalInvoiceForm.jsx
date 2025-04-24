@@ -27,12 +27,25 @@ function DigitalInvoiceForm() {
       netPayableAmount: 13196,
       subTotal: 11782.12,
       rounding: 0,
-      purchasedPieces: 3,
-      invoiceNo: "5286",
-      barCode: "barcode_data",
-      cashierId: "475117",
-      cashierName: "Krishna",
-      orderDateTime: "13-09-2024 17:20:51",
+      taxesInfo: {
+        cgstPercent: 9,
+        sgstPercent: 9,
+        igstPercent: 9,
+        utgstPercent: 9,
+        cgst: 148.5,
+        sgst: 148.5,
+        igst: 148.5,
+        utgst: 148.5,
+      },
+      payments: [
+        {
+          mode: "UPI",
+          total: 13196,
+          status: "SUCCESS",
+        },
+      ],
+      orderNo: "28",
+      orderRegNo: "1",
       productsData: [
         {
           name: "BLACK LOGO PRINT CREW NECK T-SHIRT",
@@ -43,6 +56,16 @@ function DigitalInvoiceForm() {
           totalAmount: 250,
           hsnCode: "6276462",
           discount: 50,
+          taxes: {
+            sgstPercent: 6,
+            sgst: 8,
+            cgstPercent: 6,
+            cgst: 8,
+            igstPercent: 6,
+            igst: 8,
+            utgstPercent: 6,
+            utgst: 3,
+          },
         },
         {
           name: "BLACK LOGO RISE WASHED GLENN SLIM FIT JEANS",
@@ -53,8 +76,32 @@ function DigitalInvoiceForm() {
           totalAmount: 1400,
           hsnCode: "6276462",
           discount: 0,
+          taxes: {
+            sgstPercent: 6,
+            sgst: 8,
+            cgstPercent: 6,
+            cgst: 8,
+            igstPercent: 6,
+            igst: 8,
+            utgstPercent: 6,
+            utgst: 3,
+          },
         },
       ],
+      purchasedPieces: 3,
+      invoiceNo: "5286",
+      barCode: "barcode_data",
+      loyaltyData: {
+        type: "cashback",
+        cardNum: "V1218199412",
+        pointsEarned: 127,
+        walletAmount: 1500,
+        amountSaved: 50,
+        pointsRedeemed: 127,
+      },
+      cashierId: "475117",
+      cashierName: "Krishna",
+      orderDateTime: "13-09-2024 17:20:51",
     },
     billFooterData: {
       disclaimer: "disclaimer testing",
@@ -139,29 +186,142 @@ function DigitalInvoiceForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Construct the curl command
+    // Construct the payload to match the curl command
+    const payload = {
+      customerInfo: {
+        mobile: "7906059714",
+        name: "Aarav Rubral",
+        email: "customer_6383575597@example.com",
+        countryCode: "+91",
+        gstrName: "Ramandeep",
+        gstrMob: "9764775793",
+        gstrNo: "217686439898",
+      },
+      transactionInfo: {
+        clientId: "123454",
+        batchId: "09865",
+        roc: "876767",
+        txnId: "97785",
+        txnType: "UPI",
+      },
+      orderDetails: {
+        storeCode: "9991",
+        storeAddress: "Connaught Plaza Restaurants Pvt.Ltd.",
+        billingPOSNo: "101",
+        netPayableAmount: 13196,
+        subTotal: 11782.12,
+        rounding: 0,
+        taxesInfo: {
+          cgstPercent: 9,
+          sgstPercent: 9,
+          igstPercent: 9,
+          utgstPercent: 9,
+          cgst: 148.5,
+          sgst: 148.5,
+          igst: 148.5,
+          utgst: 148.5,
+        },
+        payments: [
+          {
+            mode: "UPI",
+            total: 13196,
+            status: "SUCCESS",
+          },
+        ],
+        orderNo: "28",
+        orderRegNo: "1",
+        productsData: [
+          {
+            name: "BLACK LOGO PRINT CREW NECK T-SHIRT",
+            description: "Premium t-shirt",
+            productCode: "A123",
+            quantity: 1,
+            unitAmount: 300,
+            totalAmount: 250,
+            hsnCode: "6276462",
+            discount: 50,
+            taxes: {
+              sgstPercent: 6,
+              sgst: 8,
+              cgstPercent: 6,
+              cgst: 8,
+              igstPercent: 6,
+              igst: 8,
+              utgstPercent: 6,
+              utgst: 3,
+            },
+          },
+          {
+            name: "BLACK LOGO RISE WASHED GLENN SLIM FIT JEANS",
+            description: "BLACK LOGO RISE WASHED GLENN SLIM FIT JEANS",
+            productCode: "A124",
+            quantity: 2,
+            unitAmount: 700,
+            totalAmount: 1400,
+            hsnCode: "6276462",
+            discount: 0,
+            taxes: {
+              sgstPercent: 6,
+              sgst: 8,
+              cgstPercent: 6,
+              cgst: 8,
+              igstPercent: 6,
+              igst: 8,
+              utgstPercent: 6,
+              utgst: 3,
+            },
+          },
+        ],
+        purchasedPieces: 3,
+        invoiceNo: "5286",
+        barCode: "barcode_data",
+        loyaltyData: {
+          type: "cashback",
+          cardNum: "V1218199412",
+          pointsEarned: 127,
+          walletAmount: 1500,
+          amountSaved: 50,
+          pointsRedeemed: 127,
+        },
+        cashierId: "475117",
+        cashierName: "Krishna",
+        orderDateTime: "13-09-2024 17:20:51",
+      },
+      billFooterData: {
+        disclaimer: "disclaimer testing",
+        purchaseTerms: "https://company.co.in/",
+        feedbackCode: "LTE123",
+        feedbackDiscount: 0,
+        feedbackLink: "https://company.co.in/",
+        orderInstructions: "Please provide black Umbrella",
+        footerInfo: "Thank you for shopping",
+      },
+    };
+
+    // Construct the headers
+    const headers = {
+      Authorization:
+        "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.eyJleHAiOjE3NjEwMjQzMjksImlhdCI6MTc0NTQ3MjMyOSwianRpIjoiMjFkOTJlYjYtZDdiNi00ZmM3LTk0NDktMWI2Mjk5MTExMzJhIiwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eXRlc3QucGluZWxhYnMuY29tL3JlYWxtcy9waW5lbGFicyIsInN1YiI6IjhmNzJlZjBiLTI0ZTMtNDQwZi1iZmQzLTExMTVhMDhkZjBiZCIsInR5cCI6IkJlYXJlciIsImF6cCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSIsImFjciI6IjEiLCJzY29wZSI6ImZldGNoLnBpbmUub25lLnRyYW5zYWN0aW9uLkdFVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5QT1NUIHYxLmJpbGxpbmctaW50ZWdyYXRpb24ucXItcGF5bWVudHMudHJhbnNhY3Rpb25zLmRpZ2l0YWwtaW52b2ljZS12Mi5jcmVhdGUuUE9TVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5HRVQgYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuY2FuY2VsLlBPU1Qgb2ZmbGluZV9hY2Nlc3MgdjEuYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuZGlnaXRhbC1pbnZvaWNlLXYxLmNyZWF0ZS5QT1NUIiwiY2xpZW50SG9zdCI6IjE0LjE0My4xMjAuODIiLCJleHRJZCI6IjIwMTUiLCJNZXJjaGFudElkIjoiMjAxNSIsImNsaWVudEFkZHJlc3MiOiIxNC4xNDMuMTIwLjgyIiwiY2xpZW50X2lkIjoiTWVyY2hhbnRCaWxsaW5nU2Vydl8yMDE1In0.DtG1R--rgd9HZccykXXeD7N13YCOStPTKsVMIDsDSn2VMHdBu7_Erwktt2YCm_k3tV5LMH4pwQYN6NAWGnDNlQ",
+      "Content-Type": "application/json",
+      "correlation-id": "123455",
+    };
+
+    // Log the equivalent curl command
     const curlCommand = `
 curl --location 'https://testapi.pinelabs.com/v1/billing-integration/qr-payments/transactions/digital-invoice-v2/create' \\
---header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.DtG1R--rgd9HZccykXXeD7N13YCOStPTKsVMIDsDSn2VMHdBu7_Erwktt2YCm_k3tV5LMH4pwQYN6NAWGnDNlQ' \\
---header 'Content-Type: application/json' \\
---header 'correlation-id: 123455' \\
---data-raw '${JSON.stringify(formData, null, 2)}'
+--header 'Authorization: ${headers.Authorization}' \\
+--header 'Content-Type: ${headers["Content-Type"]}' \\
+--header 'correlation-id: ${headers["correlation-id"]}' \\
+--data-raw '${JSON.stringify(payload, null, 2)}'
   `;
+    console.log("Equivalent curl command:", curlCommand);
 
-    console.log("Equivalent curl command:", curlCommand); // Log the curl command
-
+    // Make the API request
     try {
       const response = await axios.post(
         "https://testapi.pinelabs.com/v1/billing-integration/qr-payments/transactions/digital-invoice-v2/create",
-        formData,
-        {
-          headers: {
-            Authorization:
-              "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.DtG1R--rgd9HZccykXXeD7N13YCOStPTKsVMIDsDSn2VMHdBu7_Erwktt2YCm_k3tV5LMH4pwQYN6NAWGnDNlQ",
-            "Content-Type": "application/json",
-            "correlation-id": "123455",
-          },
-        }
+        payload,
+        { headers }
       );
       alert("API call successful!");
       console.log("Response:", response.data);
