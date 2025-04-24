@@ -1,0 +1,177 @@
+/* ==== Simple Theme ==== */
+:root {
+    --primary-color: #008080; /* Teal */
+    --primary-hover-color: #006666;
+    --selected-tab-color: #004c4c;
+    --background-color: #ffffff;
+    --form-background: #f5f5f5;
+    --text-color: #000000;
+    --label-color: #333333;
+    --border-color: #cccccc;
+    --input-background: #ffffff;
+    --placeholder-color: #aaaaaa; /* Light gray placeholder text */
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --delete-button-color: #ff4d4d; /* Red for delete button */
+    --delete-button-hover-color: #cc0000; /* Darker red for hover */
+}
+
+/* ==== Reset and Base ==== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    padding: 40px 20px;
+}
+
+/* ==== Heading ==== */
+h1 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 30px;
+}
+
+/* ==== Tabs Styling ==== */
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px; /* Increased spacing below the tabs */
+    gap: 15px; /* Added spacing between individual tabs */
+}
+
+.tab-button {
+    padding: 12px 16px; /* Increased padding for better click area */
+    background-color: var(--form-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-color);
+    text-transform: uppercase; /* Ensure tab text is all capital letters */
+    font-weight: normal; /* Removed bold text */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.tab-button.active {
+    background-color: var(--selected-tab-color);
+    color: white;
+}
+
+.tab-button:hover {
+    background-color: var(--primary-hover-color);
+    color: white;
+}
+
+/* ==== Form Fields Styling ==== */
+.field-label {
+    display: block;
+    font-weight: normal; /* Removed bold text */
+    margin-bottom: 5px; /* Slightly increased spacing between label and input */
+    color: var(--label-color);
+    text-transform: none; /* Ensure only the first letter is capitalized */
+}
+
+.field-input {
+    width: 100%;
+    padding: 10px; /* Standard padding for inputs */
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--input-background);
+    color: var(--text-color);
+    font-size: 14px; /* Standard font size for inputs */
+}
+
+/* Placeholder styling */
+.field-input::placeholder {
+    color: var(--placeholder-color); /* Light gray placeholder text */
+    font-style: italic; /* Optional: Makes the placeholder text italic */
+}
+
+/* ==== Form Container Styling ==== */
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: var(--form-background);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--border-color);
+}
+
+/* ==== Product Block Styling ==== */
+.product-block {
+    padding: 15px;
+    background-color: var(--form-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.product-fields {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px; /* Reduced gap between fields for compactness */
+}
+
+.product-separator {
+    margin-top: 15px;
+    border: none;
+    border-top: 1px solid var(--border-color);
+}
+
+/* ==== Add Product Button ==== */
+.add-product-button {
+    margin-top: 10px;
+    margin-bottom: 20px; /* Added spacing below the Add Product button */
+    padding: 10px 15px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: normal; /* Removed bold text */
+}
+
+.add-product-button:hover {
+    background-color: var(--primary-hover-color);
+}
+
+/* ==== Submit Button Styling ==== */
+.submit-button {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: normal; /* Removed bold text */
+    font-size: 16px;
+    margin-top: 20px; /* Ensure spacing above the Submit button */
+}
+
+.submit-button:hover {
+    background-color: var(--primary-hover-color);
+}
+
+/* ==== Delete Product Button ==== */
+.delete-product-button {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: var(--delete-button-color); /* Red color for delete button */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: normal; /* Removed bold text */
+    font-size: 14px;
+}
+
+.delete-product-button:hover {
+    background-color: var(--delete-button-hover-color); /* Darker red on hover */
+}
