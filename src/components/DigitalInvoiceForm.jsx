@@ -128,23 +128,26 @@ function DigitalInvoiceForm() {
     const value = e.target.value;
     setFormData((prev) => {
       if (nestedKey && index !== null) {
-        // Update nested array (e.g., payments in orderDetails)
-        const updatedArray = [...prev[section][nestedKey]];
+        // Update nested array (e.g., taxes in productsData)
+        const updatedArray = [...prev[section].productsData];
+        updatedArray[index][nestedKey][key] = value;
+        return {
+          ...prev,
+          [section]: {
+            ...prev[section],
+            productsData: updatedArray,
+          },
+        };
+      } else if (index !== null) {
+        // Update array (e.g., productsData)
+        const updatedArray = [...prev[section].productsData];
         updatedArray[index][key] = value;
         return {
           ...prev,
           [section]: {
             ...prev[section],
-            [nestedKey]: updatedArray,
+            productsData: updatedArray,
           },
-        };
-      } else if (index !== null) {
-        // Update nested array (e.g., productsData)
-        const updatedArray = [...prev[section]];
-        updatedArray[index][key] = value;
-        return {
-          ...prev,
-          [section]: updatedArray,
         };
       }
       // Update top-level fields
