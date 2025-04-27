@@ -237,17 +237,42 @@ curl --location '${apiUrl}' \\
             <div key={index} className="product-block">
               <h3>Product {index + 1}</h3>
               <div className="product-fields">
-                {Object.keys(product).map((key) => (
-                  <div key={key} className="form-field">
-                    <label className="field-label">{formatFieldName(key)}</label>
-                    <input
-                      type="text"
-                      value={product[key]}
-                      onChange={(e) => handleChange(e, "orderDetails", key, index)}
-                      className="field-input"
-                    />
-                  </div>
-                ))}
+                {Object.keys(product).map((key) => {
+                  if (key === "taxes") {
+                    // Render Taxes block
+                    return (
+                      <div key={key} className="form-field">
+                        <h5>Taxes</h5>
+                        <div className="tax-info-block">
+                          {Object.keys(product.taxes).map((taxKey) => (
+                            <div key={taxKey} className="form-field">
+                              <label className="field-label">{formatFieldName(taxKey)}</label>
+                              <input
+                                type="number"
+                                value={product.taxes[taxKey]}
+                                onChange={(e) =>
+                                  handleChange(e, "orderDetails", taxKey, index, "taxes")
+                                }
+                                className="field-input"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
+                  return (
+                    <div key={key} className="form-field">
+                      <label className="field-label">{formatFieldName(key)}</label>
+                      <input
+                        type="text"
+                        value={product[key]}
+                        onChange={(e) => handleChange(e, "orderDetails", key, index)}
+                        className="field-input"
+                      />
+                    </div>
+                  );
+                })}
               </div>
               <button
                 type="button"

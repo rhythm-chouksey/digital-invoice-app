@@ -213,16 +213,18 @@ h1 {
     color: var(--text-color);
 }
 
-/* Taxes Info Section Styling */
+/* Taxes Block Styling for Product Data */
 .tax-info-block {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 columns for compact layout */
-    gap: 20px; /* Space between fields */
-    margin-bottom: 15px; /* Space below the Taxes Info section */
-    padding: 10px;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns for better utilization of space */
+    gap: 8px; /* Reduced gap between fields for compactness */
+    margin-top: 8px; /* Reduced space above the Taxes block */
+    margin-bottom: 8px; /* Reduced space below the Taxes block */
+    padding: 6px; /* Reduced padding for a smaller block */
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 4px; /* Slightly smaller border radius */
     background-color: var(--form-background);
+    width: 100%; /* Ensure it spans the full width */
 }
 
 .tax-info-block .form-field {
@@ -230,21 +232,21 @@ h1 {
 }
 
 .tax-info-block label {
-    font-size: 14px;
-    margin-bottom: 5px;
+    font-size: 11px; /* Smaller font size for labels */
+    margin-bottom: 2px; /* Reduced spacing between label and input */
     display: block;
 }
 
 .tax-info-block input {
     width: 100%;
-    padding: 8px;
-    font-size: 14px;
+    padding: 5px; /* Reduced padding for smaller inputs */
+    font-size: 11px; /* Smaller font size for inputs */
     border: 1px solid var(--border-color);
-    border-radius: 6px;
+    border-radius: 3px; /* Slightly smaller border radius */
     background-color: var(--input-background);
     color: var(--text-color);
 }
-
+  
 /* Loyalty Data Section Styling */
 .loyalty-data-block {
     display: grid;
