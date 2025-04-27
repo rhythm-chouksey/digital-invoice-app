@@ -116,6 +116,8 @@ function DigitalInvoiceForm() {
 
   const [formData, setFormData] = useState(defaultFormData);
   const [activeTab, setActiveTab] = useState("customerInfo");
+  const [popupMessage, setPopupMessage] = useState(null);
+  const [popupType, setPopupType] = useState("success"); // or "error"
 
   // Utility function to format field names
   const formatFieldName = (fieldName) => {
@@ -171,6 +173,16 @@ function DigitalInvoiceForm() {
       totalAmount: 0,
       hsnCode: "",
       discount: 0,
+      taxes: {
+        sgstPercent: 0,
+        sgst: 0,
+        cgstPercent: 0,
+        cgst: 0,
+        igstPercent: 0,
+        igst: 0,
+        utgstPercent: 0,
+        utgst: 0,
+      },
     };
     setFormData((prev) => ({
       ...prev,
@@ -206,7 +218,7 @@ function DigitalInvoiceForm() {
     // Construct the headers
     const headers = {
       Authorization:
-        "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.eyJleHAiOjE3NjEwMjQzMjksImlhdCI6MTc0NTQ3MjMyOSwianRpIjoiMjFkOTJlYjYtZDdiNi00ZmM3LTk0NDktMWI2Mjk5MTExMzJhIiwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eXRlc3QucGluZWxhYnMuY29tL3JlYWxtcy9waW5lbGFicyIsInN1YiI6IjhmNzJlZjBiLTI0ZTMtNDQwZi1iZmQzLTExMTVhMDhkZjBiZCIsInR5cCI6IkJlYXJlciIsImF6cCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSIsImFjciI6IjEiLCJzY29wZSI6ImZldGNoLnBpbmUub25lLnRyYW5zYWN0aW9uLkdFVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5QT1NUIHYxLmJpbGxpbmctaW50ZWdyYXRpb24ucXItcGF5bWVudHMudHJhbnNhY3Rpb25zLmRpZ2l0YWwtaW52b2ljZS12Mi5jcmVhdGUuUE9TVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5HRVQgYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuY2FuY2VsLlBPU1Qgb2ZmbGluZV9hY2Nlc3MgdjEuYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuZGlnaXRhbC1pbnZvaWNlLXYxLmNyZWF0ZS5QT1NUIiwiY2xpZW50SG9zdCI6IjE0LjE0My4xMjAuODIiLCJleHRJZCI6IjIwMTUiLCJNZXJjaGFudElkIjoiMjAxNSIsImNsaWVudEFkZHJlc3MiOiIxNC4xNDMuMTIwLjgyIiwiY2xpZW50X2lkIjoiTWVyY2hhbnRCaWxsaW5nU2Vydl8yMDE1In0.DtG1R--rgd9HZccykXXeD7N13YCOStPTKsVMIDsDSn2VMHdBu7_Erwktt2YCm_k3tV5LMH4pwQYN6NAWGnDNlQ",
+        "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.eyJleHAiOjE3NjEwMjQzMjksImlhdCI6MTc0NTQ3MjMyOSwianRpIjoiMjFkOTJlYjYtZDdiNi00ZmM3LTk0NDktMWI2Mjk5MTExMzJhIiwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eXRlc3QucGluZWxhYnMuY29tL3JlYWxtcy9waW5lbGFicyIsInN1YiI6IjhmNzJlZjBiLTI0ZTMtNDQwZi1iZmQzLTExMTVhMDhkZjBiZCIsInR5cCI6IkJlYXJlciIsImF6cCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSIsImFjciI6IjEiLCJzY29wZSI6ImZldGNoLnBpbmUub25lLnRyYW5zYWN0aW9uLkdFVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5QT1NUIHYxLmJpbGxpbmctaW50ZWdyYXRpb24ucXItcGF5bWVudHMudHJhbnNhY3Rpb25zLmRpZ2l0YWwtaW52b2ljZS12Mi5jcmVhdGUuUE9TVCBiaWxsaW5nLWludGVnZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuY2FuY2VsLlBPU1Qgb2ZmbGluZV9hY2Nlc3MgdjEuYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuZGlnaXRhbC1pbnZvaWNlLXYxLmNyZWF0ZS5QT1NUIiwiY2xpZW50SG9zdCI6IjE0LjE0My4xMjAuODIiLCJleHRJZCI6IjIwMTUiLCJNZXJjaGFudElkIjoiMjAxNSIsImNsaWVudEFkZHJlc3MiOiIxNC4xNDMuMTIwLjgyIiwiY2xpZW50X2lkIjoiTWVyY2hhbnRCaWxsaW5nU2Vydl8yMDE1In0.DtG1R--rgd9HZccykXXeD7N13YCOStPTKsVMIDsDSn2VMHdBu7_Erwktt2YCm_k3tV5LMH4pwQYN6NAWGnDNlQ",
       "Content-Type": "application/json",
       "correlation-id": "123455",
     };
@@ -224,10 +236,12 @@ curl --location '${apiUrl}' \\
     // Make the API request
     try {
       const response = await axios.post(apiUrl, payload, { headers });
-      alert("API call successful!");
+      setPopupType("success");
+      setPopupMessage("API call successful!");
       console.log("Response:", response.data);
     } catch (error) {
-      alert("API call failed!");
+      setPopupType("error");
+      setPopupMessage(error.response?.data?.message || "API call failed!");
       console.error("Error:", error.response?.data || error.message);
     }
   };
@@ -429,7 +443,7 @@ curl --location '${apiUrl}' \\
   return (
     <div className="form-container">
       <h1 className="form-title">Digital Invoice Form</h1>
-      <div className="tabs">
+      <div className={`tabs ${popupMessage ? "popup-active" : ""}`}>
         <button
           className={`tab-button ${activeTab === "customerInfo" ? "active" : ""}`}
           onClick={() => setActiveTab("customerInfo")}
@@ -461,7 +475,7 @@ curl --location '${apiUrl}' \\
           Bill Footer Data
         </button>
       </div>
-      <form onSubmit={handleSubmit} className="form">
+      <form onSubmit={handleSubmit} className={`form ${popupMessage ? "popup-active" : ""}`}>
         {activeTab === "customerInfo" && (
           <div className="form-section">{renderFields("customerInfo")}</div>
         )}
@@ -481,6 +495,13 @@ curl --location '${apiUrl}' \\
           Submit
         </button>
       </form>
+      {popupMessage && (
+        <div className={`popup ${popupType}`}>
+          <h3>{popupType === "success" ? "Success" : "Error"}</h3>
+          <p>{popupMessage}</p>
+          <button onClick={() => setPopupMessage(null)}>Close</button>
+        </div>
+      )}
     </div>
   );
 }

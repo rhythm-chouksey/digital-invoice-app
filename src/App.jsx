@@ -4,7 +4,9 @@ import DigitalInvoiceForm from "./components/DigitalInvoiceForm";
 function App() {
   return (
     <div>
-      <h1>Digital Invoice Application</h1>
+      <div className="logo">
+        <div className="logo-text">PINE LABS</div>
+      </div>
       <DigitalInvoiceForm />
     </div>
   );

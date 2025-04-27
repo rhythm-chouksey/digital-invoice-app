@@ -9,10 +9,13 @@
     --label-color: #333333;
     --border-color: #cccccc;
     --input-background: #ffffff;
+    --input-focus-background: #e0f7fa; /* Light background on focus */
     --placeholder-color: #aaaaaa; /* Light gray placeholder text */
     --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     --delete-button-color: #ff4d4d; /* Red for delete button */
     --delete-button-hover-color: #cc0000; /* Darker red for hover */
+    --focus-border-color: #80cbc4; /* Subtle teal border color */
+    --focus-background-color: #f1fefc; /* Very light teal background */
 }
 
 /* ==== Reset and Base ==== */
@@ -29,18 +32,42 @@ body {
     padding: 40px 20px;
 }
 
-/* ==== Heading ==== */
-h1 {
-    text-align: center;
-    color: var(--primary-color);
-    margin-bottom: 30px;
+/* Logo Styling */
+.logo {
+    background-color: var(--selected-tab-color); /* Use the selected tab color */
+    padding: 20px; /* Add padding for spacing */
+    text-align: center; /* Center-align the text */
+    border-radius: 8px; /* Add rounded corners for a modern look */
+    margin: 0 auto 20px auto; /* Center the logo and add spacing below */
+    max-width: 800px; /* Match the width of the Digital Invoice Form */
+    box-shadow: var(--box-shadow); /* Optional: Add a subtle shadow */
 }
 
-/* ==== Tabs Styling ==== */
+.logo-text {
+    font-size: 32px; /* Larger font size for emphasis */
+    font-weight: bold; /* Make the text bold */
+    color: white; /* White text for contrast */
+    text-transform: uppercase; /* Make the text uppercase */
+}
+
+/* Digital Invoice Form Styling */
+.form-title {
+    color: var(--text-color); /* Use the default text color */
+    text-align: center; /* Center-align the text */
+    font-size: 28px; /* Font size for the form title */
+    font-weight: bold; /* Make the text bold */
+    margin-bottom: 25px; /* Add spacing below the title */
+    text-transform: uppercase; /* Make the text uppercase */
+    letter-spacing: 1.5px; /* Add spacing between letters */
+    word-spacing: 8px; /* Add spacing between words */
+}
+
+/* Tabs Styling */
 .tabs {
     display: flex;
     justify-content: space-around;
-    margin-bottom: 30px; /* Increased spacing below the tabs */
+    margin-top: 10px; /* Optional: Add spacing above the tabs */
+    margin-bottom: 20px; /* Increased spacing below the tabs */
     gap: 15px; /* Added spacing between individual tabs */
 }
 
@@ -56,13 +83,15 @@ h1 {
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.tab-button.active {
-    background-color: var(--selected-tab-color);
-    color: white;
+.tab-button:hover {
+    background-color: var(--tab-hover-color-light);
+    color: var(--text-color);
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.tab-button:hover {
-    background-color: var(--primary-hover-color);
+/* Selected Tab Styling */
+.tab-button.active {
+    background-color: var(--selected-tab-color); /* Darker teal for selected tab */
     color: white;
 }
 
@@ -89,6 +118,21 @@ h1 {
 .field-input::placeholder {
     color: var(--placeholder-color); /* Light gray placeholder text */
     font-style: italic; /* Optional: Makes the placeholder text italic */
+}
+
+/* Highlight input fields on hover with a subtle color */
+.field-input:hover {
+    border-color: var(--focus-border-color); /* Subtle teal border color */
+    box-shadow: 0 0 3px var(--focus-box-shadow); /* Subtle glow effect */
+    background-color: var(--focus-background-color); /* Very light teal background */
+}
+
+/* Highlight input fields on focus with a subtle color */
+.field-input:focus {
+    border-color: var(--focus-border-color); /* Subtle teal border color */
+    box-shadow: 0 0 5px var(--focus-box-shadow); /* Slightly stronger glow effect */
+    outline: none; /* Remove the default outline */
+    background-color: var(--focus-background-color); /* Very light teal background */
 }
 
 /* ==== Form Container Styling ==== */
@@ -309,4 +353,94 @@ h1 {
     border-radius: 6px;
     background-color: var(--input-background);
     color: var(--text-color);
+}
+
+/* Popup Styling */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--form-background);
+    border: 1px solid var(--border-color);
+    border-radius: 12px; /* Increased border radius for a modern look */
+    padding: 30px; /* Increased padding for a larger popup */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Stronger shadow for emphasis */
+    z-index: 1000;
+    text-align: center;
+    width: 400px; /* Increased width */
+    max-width: 90%; /* Ensure it fits smaller screens */
+}
+
+.popup.success {
+    border-color: #4caf50; /* Green border for success */
+    color: #4caf50; /* Green text for success */
+}
+
+.popup.error {
+    border-color: #f44336; /* Red border for error */
+    color: #f44336; /* Red text for error */
+}
+
+.popup h3 {
+    margin-bottom: 15px;
+    font-size: 22px; /* Larger font size for the title */
+    font-weight: bold;
+}
+
+.popup p {
+    font-size: 16px; /* Larger font size for the message */
+    color: var(--text-color);
+}
+
+.popup button {
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.popup button:hover {
+    background-color: var(--primary-hover-color);
+}
+
+/* Blur Background When Popup is Active */
+.popup-active {
+    filter: blur(5px); /* Apply blur effect */
+    pointer-events: none; /* Disable interactions with the background */
+}
+
+/* Input Container Styling */
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px; /* Add spacing between input fields */
+}
+
+/* Input Field Styling */
+.field-input {
+    flex: 1; /* Allow the input to take up available space */
+    padding-right: 50px; /* Add space for the clear button */
+}
+
+/* Clear Button Styling */
+.clear-button {
+    position: absolute;
+    right: 10px; /* Position the button inside the input container */
+    padding: 5px 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.clear-button:hover {
+    background-color: var(--primary-hover-color);
 }
