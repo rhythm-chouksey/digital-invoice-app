@@ -84,9 +84,9 @@ body {
 }
 
 .tab-button:hover {
-    background-color: var(--tab-hover-color-light);
-    color: var(--text-color);
-    transition: background-color 0.2s ease, color 0.2s ease;
+    background-color: var(--focus-background-color); /* Light teal background on hover */
+    color: var(--primary-color); /* Change text color to primary color */
+    transition: background-color 0.2s ease, color 0.2s ease; /* Smooth transition */
 }
 
 /* Selected Tab Styling */
