@@ -186,7 +186,7 @@ function DigitalInvoiceForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const apiUrl = "https://cors-anywhere.herokuapp.com/https://testapi.pinelabs.com/v1/billing-integration/qr-payments/transactions/digital-invoice-v2/create";
+    const apiUrl = "https://testapi.pinelabs.com/v1/billing-integration/qr-payments/transactions/digital-invoice-v2/create";
 
     // Use formData as the payload
     const payload = formData;
