@@ -124,21 +124,30 @@ function DigitalInvoiceForm() {
       .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
   };
 
-  const handleChange = (e, section, key, index = null) => {
+  const handleChange = (e, section, key, index = null, nestedKey = null) => {
     const value = e.target.value;
     setFormData((prev) => {
-      if (index !== null) {
-        // Update nested array (e.g., productsData)
-        const updatedArray = [...prev[section].productsData];
+      if (nestedKey && index !== null) {
+        // Update nested array (e.g., payments in orderDetails)
+        const updatedArray = [...prev[section][nestedKey]];
         updatedArray[index][key] = value;
         return {
           ...prev,
           [section]: {
             ...prev[section],
-            productsData: updatedArray,
+            [nestedKey]: updatedArray,
           },
         };
+      } else if (index !== null) {
+        // Update nested array (e.g., productsData)
+        const updatedArray = [...prev[section]];
+        updatedArray[index][key] = value;
+        return {
+          ...prev,
+          [section]: updatedArray,
+        };
       }
+      // Update top-level fields
       return {
         ...prev,
         [section]: {
@@ -260,6 +269,67 @@ curl --location '${apiUrl}' \\
         </>
       );
     }
+
+    if (section === "orderDetails") {
+      return (
+        <>
+          {Object.keys(formData[section]).map((key) => {
+            if (key === "productsData") {
+              // Skip rendering productsData in orderDetails
+              return null;
+            }
+            if (key === "payments") {
+              return (
+                <div key={key} className="form-field">
+                  <h5>Payments</h5>
+                  {formData.orderDetails.payments.map((payment, index) => (
+                    <div key={index} className="payment-block">
+                      <div className="form-field">
+                        <label className="field-label">Mode</label>
+                        <select
+                          value={payment.mode}
+                          onChange={(e) =>
+                            handleChange(e, "orderDetails", "mode", index, "payments")
+                          }
+                          className="field-input"
+                        >
+                          <option value="UPI">UPI</option>
+                          <option value="CARD">CARD</option>
+                        </select>
+                      </div>
+                      <div className="form-field">
+                        <label className="field-label">Total</label>
+                        <input
+                          type="number"
+                          value={payment.total}
+                          onChange={(e) =>
+                            handleChange(e, "orderDetails", "total", index, "payments")
+                          }
+                          className="field-input"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            } else {
+              return (
+                <div key={key} className="form-field">
+                  <label className="field-label">{formatFieldName(key)}</label>
+                  <input
+                    type="text"
+                    value={formData[section][key]}
+                    onChange={(e) => handleChange(e, section, key)}
+                    className="field-input"
+                  />
+                </div>
+              );
+            }
+          })}
+        </>
+      );
+    }
+
     return Object.keys(formData[section]).map((key) => (
       <div key={key} className="form-field">
         <label className="field-label">{formatFieldName(key)}</label>

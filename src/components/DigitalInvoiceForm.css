@@ -175,3 +175,40 @@ h1 {
 .delete-product-button:hover {
     background-color: var(--delete-button-hover-color); /* Darker red on hover */
 }
+
+/* Payments Section Styling */
+.form-field h5 {
+    margin-bottom: 10px; /* Add spacing below the Payments heading */
+}
+
+.payment-block {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Space between fields */
+    margin-bottom: 15px; /* Space between payment rows */
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--form-background);
+}
+
+.payment-block .form-field {
+    flex: 1; /* Ensure fields take equal space */
+}
+
+.payment-block label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.payment-block select,
+.payment-block input {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--input-background);
+    color: var(--text-color);
+}
