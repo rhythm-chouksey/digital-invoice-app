@@ -212,3 +212,99 @@ h1 {
     background-color: var(--input-background);
     color: var(--text-color);
 }
+
+/* Taxes Info Section Styling */
+.tax-info-block {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns for compact layout */
+    gap: 20px; /* Space between fields */
+    margin-bottom: 15px; /* Space below the Taxes Info section */
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--form-background);
+}
+
+.tax-info-block .form-field {
+    flex: 1; /* Ensure fields take equal space */
+}
+
+.tax-info-block label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.tax-info-block input {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--input-background);
+    color: var(--text-color);
+}
+
+/* Loyalty Data Section Styling */
+.loyalty-data-block {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for compact layout */
+    gap: 20px; /* Space between fields */
+    margin-bottom: 15px; /* Space below the Loyalty Data section */
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--form-background);
+}
+
+.loyalty-data-block .form-field {
+    flex: 1; /* Ensure fields take equal space */
+}
+
+.loyalty-data-block label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.loyalty-data-block input {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--input-background);
+    color: var(--text-color);
+}
+
+/* Order Details Section Styling */
+.order-details-block {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for compact layout */
+    gap: 20px; /* Space between fields */
+    margin-bottom: 15px; /* Space below the Order Details section */
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--form-background);
+}
+
+.order-details-block .form-field {
+    flex: 1; /* Ensure fields take equal space */
+}
+
+.order-details-block label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.order-details-block input {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--input-background);
+    color: var(--text-color);
+}

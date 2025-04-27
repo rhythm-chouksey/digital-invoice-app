@@ -273,59 +273,114 @@ curl --location '${apiUrl}' \\
     if (section === "orderDetails") {
       return (
         <>
-          {Object.keys(formData[section]).map((key) => {
-            if (key === "productsData") {
-              // Skip rendering productsData in orderDetails
-              return null;
-            }
-            if (key === "payments") {
-              return (
-                <div key={key} className="form-field">
-                  <h5>Payments</h5>
-                  {formData.orderDetails.payments.map((payment, index) => (
-                    <div key={index} className="payment-block">
-                      <div className="form-field">
-                        <label className="field-label">Mode</label>
-                        <select
-                          value={payment.mode}
-                          onChange={(e) =>
-                            handleChange(e, "orderDetails", "mode", index, "payments")
-                          }
-                          className="field-input"
-                        >
-                          <option value="UPI">UPI</option>
-                          <option value="CARD">CARD</option>
-                        </select>
-                      </div>
-                      <div className="form-field">
-                        <label className="field-label">Total</label>
-                        <input
-                          type="number"
-                          value={payment.total}
-                          onChange={(e) =>
-                            handleChange(e, "orderDetails", "total", index, "payments")
-                          }
-                          className="field-input"
-                        />
-                      </div>
+          {/* Group other order details fields */}
+          <div className="form-field">
+            <h5>Order Details</h5>
+            <div className="order-details-block">
+              {Object.keys(formData[section]).map((key) => {
+                if (key === "productsData" || key === "payments" || key === "taxesInfo" || key === "loyaltyData") {
+                  // Skip rendering these keys for now; we'll handle them later
+                  return null;
+                }
+                return (
+                  <div key={key} className="form-field">
+                    <label className="field-label">{formatFieldName(key)}</label>
+                    <input
+                      type="text"
+                      value={formData[section][key]}
+                      onChange={(e) => handleChange(e, section, key)}
+                      className="field-input"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Render Payments Section */}
+          {formData.orderDetails.payments && (
+            <div className="form-field">
+              <h5>Payments</h5>
+              {formData.orderDetails.payments.map((payment, index) => (
+                <div key={index} className="payment-block">
+                  <div className="form-field">
+                    <label className="field-label">Mode</label>
+                    <select
+                      value={payment.mode}
+                      onChange={(e) =>
+                        handleChange(e, "orderDetails", "mode", index, "payments")
+                      }
+                      className="field-input"
+                    >
+                      <option value="UPI">UPI</option>
+                      <option value="CARD">CARD</option>
+                    </select>
+                  </div>
+                  <div className="form-field">
+                    <label className="field-label">Total</label>
+                    <input
+                      type="number"
+                      value={payment.total}
+                      onChange={(e) =>
+                        handleChange(e, "orderDetails", "total", index, "payments")
+                      }
+                      className="field-input"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Render Taxes Info Section */}
+          {formData.orderDetails.taxesInfo && (
+            <div className="form-field">
+              <h5>Taxes Info</h5>
+              <div className="tax-info-block">
+                {Object.keys(formData.orderDetails.taxesInfo).map((taxKey) => {
+                  if (taxKey === "cgstPercent") {
+                    // Skip rendering cgstPercent
+                    return null;
+                  }
+                  return (
+                    <div key={taxKey} className="form-field">
+                      <label className="field-label">{formatFieldName(taxKey)}</label>
+                      <input
+                        type="number"
+                        value={formData.orderDetails.taxesInfo[taxKey]}
+                        onChange={(e) =>
+                          handleChange(e, "orderDetails", taxKey, null, "taxesInfo")
+                        }
+                        className="field-input"
+                      />
                     </div>
-                  ))}
-                </div>
-              );
-            } else {
-              return (
-                <div key={key} className="form-field">
-                  <label className="field-label">{formatFieldName(key)}</label>
-                  <input
-                    type="text"
-                    value={formData[section][key]}
-                    onChange={(e) => handleChange(e, section, key)}
-                    className="field-input"
-                  />
-                </div>
-              );
-            }
-          })}
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Render Loyalty Data Section */}
+          {formData.orderDetails.loyaltyData && (
+            <div className="form-field">
+              <h5>Loyalty Data</h5>
+              <div className="loyalty-data-block">
+                {Object.keys(formData.orderDetails.loyaltyData).map((loyaltyKey) => (
+                  <div key={loyaltyKey} className="form-field">
+                    <label className="field-label">{formatFieldName(loyaltyKey)}</label>
+                    <input
+                      type="text"
+                      value={formData.orderDetails.loyaltyData[loyaltyKey]}
+                      onChange={(e) =>
+                        handleChange(e, "orderDetails", loyaltyKey, null, "loyaltyData")
+                      }
+                      className="field-input"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </>
       );
     }
