@@ -110,7 +110,7 @@ function DigitalInvoiceForm() {
       feedbackDiscount: 0,
       feedbackLink: "https://company.co.in/",
       orderInstructions: "Please provide black Umbrella",
-      footerInfo: "Thank you for shopping",
+      footerInfo: "GSTIN-27AAAFH1333H1ZT         \n         GST Classification -         \n    Restaurant Services SAC-996331    \n        FSSAI : 11517007000202        \n We value your feedback. Share it to: \n     myfeedback@mcdonaldsindia.com     \n # The collection of donation is done \n  on behalf of Ronald McDonald House  \nCharities Foundation India (RMHC India)\n  on a principal-to-principal basis.",
     },
   };
 
