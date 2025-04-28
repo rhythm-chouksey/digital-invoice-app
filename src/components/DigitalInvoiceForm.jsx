@@ -128,64 +128,37 @@ function DigitalInvoiceForm() {
   };
 
   const handleChange = (e, section, key, index = null, nestedKey = null) => {
-    let value = e.target.value;
+    const value = e.target.type === "number" ? Number(e.target.value) : e.target.value;
 
     setFormData((prev) => {
-      // Determine the original value's type
-      const originalValue = nestedKey
-        ? index !== null
-          ? prev[section][nestedKey][index][key]
-          : prev[section][nestedKey][key]
-        : index !== null
-        ? prev[section][index][key]
-        : prev[section][key];
+      const updatedFormData = { ...prev };
 
-      // Cast the new value to match the original value's type
-      if (typeof originalValue === "number") {
-        value = value === "" ? "" : Number(value); // Convert to number if original value is a number
-      }
+      if (nestedKey) {
+        // Handle nested keys (e.g., "productsData.taxes")
+        const nestedKeys = nestedKey.split(".");
+        let target = updatedFormData[section];
 
-      if (nestedKey && index !== null) {
-        // Handle nested arrays (e.g., payments)
-        const updatedArray = [...prev[section][nestedKey]];
-        updatedArray[index][key] = value;
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section],
-            [nestedKey]: updatedArray,
-          },
-        };
-      } else if (nestedKey) {
-        // Handle nested objects
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section],
-            [nestedKey]: {
-              ...prev[section][nestedKey],
-              [key]: value,
-            },
-          },
-        };
+        // Traverse to the correct level
+        for (let i = 0; i < nestedKeys.length - 1; i++) {
+          target = target[nestedKeys[i]];
+        }
+
+        if (index !== null) {
+          // Handle arrays (e.g., productsData)
+          target[nestedKeys[nestedKeys.length - 1]][index][key] = value;
+        } else {
+          // Handle objects (e.g., taxesInfo)
+          target[nestedKeys[nestedKeys.length - 1]][key] = value;
+        }
       } else if (index !== null) {
-        // Handle arrays (e.g., productsData)
-        const updatedArray = [...prev[section]];
-        updatedArray[index][key] = value;
-        return {
-          ...prev,
-          [section]: updatedArray,
-        };
+        // Handle top-level arrays (e.g., productsData)
+        updatedFormData[section][index][key] = value;
+      } else {
+        // Handle top-level fields
+        updatedFormData[section][key] = value;
       }
 
-      // Handle top-level fields
-      return {
-        ...prev,
-        [section]: {
-          ...prev[section],
-          [key]: value,
-        },
-      };
+      return updatedFormData;
     });
   };
 
@@ -278,7 +251,7 @@ function DigitalInvoiceForm() {
 
     // Construct the headers
     const headers = {
-      Authorization: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.eyJleHAiOjE3NjEwMjQzMjksImlhdCI6MTc0NTQ3MjMyOSwianRpIjoiMjFkOTJlYjYtZDdiNi00ZmM3LTk0NDktMWI2Mjk5MTExMzJhIiwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eXRlc3QucGluZWxhYnMuY29tL3JlYWxtcy9waW5lbGFicyIsInN1YiI6IjhmNzJlZjBiLTI0ZTMtNDQwZi1iZmQzLTExMTVhMDhkZjBiZCIsInR5cCI6IkJlYXJlciIsImF6cCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSIsImFjciI6IjEiLCJzY29wZSI6ImZldGNoLnBpbmUub25lLnRyYW5zYWN0aW9uLkdFVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5QT1NUIHYxLmJpbGxpbmctaW50ZWdyYXRpb24ucXItcGF5bWVudHMudHJhbnNhY3Rpb25zLmRpZ2l0YWwtaW52b2ljZS12Mi5jcmVhdGUuUE9TVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5HRVQgYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuY2FuY2VsLlBPU1Qgb2ZmbGluZV9hY2Nlc3MgdjEuYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuZGlnaXRhbC1pbnZvaWNlLXYxLmNyZWF0ZS5QT1NUIiwiY2xpZW50SG9zdCI6IjE0LjE0My4xMjAuODIiLCJleHRJZCI6IjIwMTUiLCJNZXJjaGFudElkIjoiMjAxNSIsImNsaWVudEFkZHJlc3MiOiIxNC4xNDMuMTIwLjgyIiwiY2xpZW50X2lkIjoiTWVyY2hhbnRCaWxsaW5nU2Vydl8yMDE1In0.DtG1R--rgd9HZccykXXeD7N13YCOStPTKsVMIDsDSn2VMHdBu7_Erwktt2YCm_k3tV5LMH4pwQYN6NAWGnDNlQ",
+      Authorization: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.eyJleHAiOjE3NjEwMjQzMjksImlhdCI6MTc0NTQ3MjMyOSwianRpIjoiMjFkOTJlYjYtZDdiNi00ZmM3LTk0NDktMWI2Mjk5MTExMzJhIiwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eXRlc3QucGluZWxhYnMuY29tL3JlYWxtcy9waW5lbGFicyIsInN1YiI6IjhmNzJlZjBiLTI0ZTMtNDQwZi1iZmQzLTExMTVhMDhkZjBiZCIsInR5cCI6IkJlYXJlciIsImF6cCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSIsImFjciI6IjEiLCJzY29wZSI6ImZldGNoLnBpbmUub25lLnRyYW5zYWN0aW9uLkdFVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5QT1NUIHYxLmJpbGxpbmctaW50ZWdyYXRpb24ucXItcGF5bWVudHMudHJhbnNhY3Rpb25zLmNhbmNlbC5QT1NUIHZ1bG5lcmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5kaWdpdGFsLWludm9pY2UtdjEuY3JlYXRlZS5QT1NUIiwiY2xpZW50SG9zdCI6IjE0LjE0My4xMjAuODIiLCJleHRJZCI6IjIwMTUiLCJNZXJjaGFudElkIjoiMjAxNSIsImNsaWVudEFkZHJlc3MiOiIxNC4xNDMuMTIwLjgyIiwiY2xpZW50X2lkIjoiTWVyY2hhbnRCaWxsaW5nU2Vydl8yMDE1In0.DtG1R--rgd9HZccykXXeD7N13YCOStPTKsVMIDsDSn2VMHdBu7_Erwktt2YCm_k3tV5LMH4pwQYN6NAWGnDNlQ",
       "Content-Type": "application/json",
       "correlation-id": "123455",
     };
@@ -311,57 +284,59 @@ curl --location '${apiUrl}' \\
     if (section === "productsData") {
       return (
         <>
-          {formData.orderDetails.productsData.map((product, index) => (
-            <div key={index} className="product-block">
-              <h3>Product {index + 1}</h3>
-              <div className="product-fields">
-                {Object.keys(product).map((key) => {
-                  if (key === "taxes") {
-                    // Render Taxes block
+          {formData.orderDetails.productsData &&
+            formData.orderDetails.productsData.map((product, index) => (
+              <div key={index} className="product-block">
+                <h3>Product {index + 1}</h3>
+                <div className="product-fields">
+                  {Object.keys(product).map((key) => {
+                    if (key === "taxes") {
+                      // Render Taxes block
+                      return (
+                        <div key={key} className="form-field">
+                          <h5>Taxes</h5>
+                          <div className="tax-info-block">
+                            {product.taxes &&
+                              Object.keys(product.taxes).map((taxKey) => (
+                                <div key={taxKey} className="form-field">
+                                  <label className="field-label">{formatFieldName(taxKey)}</label>
+                                  <input
+                                    type="number"
+                                    value={product.taxes[taxKey] || 0} // Default to 0 if undefined
+                                    onChange={(e) =>
+                                      handleChange(e, "orderDetails", taxKey, index, "productsData.taxes")
+                                    }
+                                    className="field-input"
+                                  />
+                                </div>
+                              ))}
+                          </div>
+                        </div>
+                      );
+                    }
                     return (
                       <div key={key} className="form-field">
-                        <h5>Taxes</h5>
-                        <div className="tax-info-block">
-                          {Object.keys(product.taxes).map((taxKey) => (
-                            <div key={taxKey} className="form-field">
-                              <label className="field-label">{formatFieldName(taxKey)}</label>
-                              <input
-                                type="number"
-                                value={product.taxes[taxKey]}
-                                onChange={(e) =>
-                                  handleChange(e, "orderDetails", taxKey, index, "taxes")
-                                }
-                                className="field-input"
-                              />
-                            </div>
-                          ))}
-                        </div>
+                        <label className="field-label">{formatFieldName(key)}</label>
+                        <input
+                          type="text"
+                          value={product[key] || ""} // Default to empty string if undefined
+                          onChange={(e) => handleChange(e, "orderDetails", key, index, "productsData")}
+                          className="field-input"
+                        />
                       </div>
                     );
-                  }
-                  return (
-                    <div key={key} className="form-field">
-                      <label className="field-label">{formatFieldName(key)}</label>
-                      <input
-                        type="text"
-                        value={product[key]}
-                        onChange={(e) => handleChange(e, "orderDetails", key, index)}
-                        className="field-input"
-                      />
-                    </div>
-                  );
-                })}
+                  })}
+                </div>
+                <button
+                  type="button"
+                  className="delete-product-button"
+                  onClick={() => handleDeleteProduct(index)}
+                >
+                  Delete
+                </button>
+                <hr className="product-separator" />
               </div>
-              <button
-                type="button"
-                className="delete-product-button"
-                onClick={() => handleDeleteProduct(index)}
-              >
-                Delete
-              </button>
-              <hr className="product-separator" />
-            </div>
-          ))}
+            ))}
           <button
             type="button"
             className="add-product-button"
