@@ -127,7 +127,13 @@ function DigitalInvoiceForm() {
   };
 
   const handleChange = (e, section, key, index = null, nestedKey = null) => {
-    const value = e.target.value;
+    let value = e.target.value;
+
+    // Convert to number if the value is numeric
+    if (!isNaN(value) && value.trim() !== "") {
+      value = Number(value);
+    }
+
     setFormData((prev) => {
       if (nestedKey && index !== null) {
         // Update deeply nested fields (e.g., taxes in productsData)
