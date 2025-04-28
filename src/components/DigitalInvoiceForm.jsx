@@ -586,19 +586,19 @@ curl --location '${apiUrl}' \\
           className={`tab-button ${activeTab === "orderDetails" ? "active" : ""}`}
           onClick={() => setActiveTab("orderDetails")}
         >
-          Order Details
+          Order Info
         </button>
         <button
           className={`tab-button ${activeTab === "productsData" ? "active" : ""}`}
           onClick={() => setActiveTab("productsData")}
         >
-          Product Data
+          Product Info
         </button>
         <button
           className={`tab-button ${activeTab === "billFooterData" ? "active" : ""}`}
           onClick={() => setActiveTab("billFooterData")}
         >
-          Bill Footer Data
+          Bill Footer Info
         </button>
       </div>
       <form onSubmit={handleSubmit} className={`form ${popupMessage ? "popup-active" : ""}`}>
