@@ -128,11 +128,24 @@ function DigitalInvoiceForm() {
   };
 
   const handleChange = (e, section, key, index = null, nestedKey = null) => {
-    const value = e.target.value; // Always treat input as a string
+    let value = e.target.value;
 
     setFormData((prev) => {
+      // Determine the original value's type
+      const originalValue = nestedKey
+        ? index !== null
+          ? prev[section].productsData[index][nestedKey][key]
+          : prev[section][nestedKey][key]
+        : index !== null
+        ? prev[section].productsData[index][key]
+        : prev[section][key];
+
+      // Cast the new value to match the original value's type
+      if (typeof originalValue === "number") {
+        value = value === "" ? "" : Number(value); // Convert to number if original value is a number
+      }
+
       if (nestedKey && index !== null) {
-        // Update deeply nested fields (e.g., taxes in productsData)
         const updatedArray = [...prev[section].productsData];
         updatedArray[index][nestedKey][key] = value;
         return {
@@ -143,7 +156,6 @@ function DigitalInvoiceForm() {
           },
         };
       } else if (nestedKey) {
-        // Update nested objects (e.g., loyaltyData or taxesInfo)
         return {
           ...prev,
           [section]: {
@@ -155,7 +167,6 @@ function DigitalInvoiceForm() {
           },
         };
       } else if (index !== null) {
-        // Update array fields (e.g., productsData)
         const updatedArray = [...prev[section].productsData];
         updatedArray[index][key] = value;
         return {
@@ -166,7 +177,6 @@ function DigitalInvoiceForm() {
           },
         };
       }
-      // Update top-level fields
       return {
         ...prev,
         [section]: {
@@ -242,6 +252,28 @@ function DigitalInvoiceForm() {
       )}`;
       payload.orderDetails.orderDateTime = formattedDateTime;
     }
+
+    // Convert all numeric fields in transactionInfo to numbers
+    Object.keys(payload.transactionInfo).forEach((key) => {
+      if (!isNaN(payload.transactionInfo[key])) {
+        payload.transactionInfo[key] = Number(payload.transactionInfo[key]);
+      }
+    });
+
+    // Convert all numeric fields in orderDetails to numbers
+    Object.keys(payload.orderDetails).forEach((key) => {
+      if (typeof payload.orderDetails[key] === "string" && !isNaN(payload.orderDetails[key])) {
+        payload.orderDetails[key] = Number(payload.orderDetails[key]);
+      }
+      if (key === "taxesInfo") {
+        // Convert all numeric fields in taxesInfo to numbers
+        Object.keys(payload.orderDetails.taxesInfo).forEach((taxKey) => {
+          if (!isNaN(payload.orderDetails.taxesInfo[taxKey])) {
+            payload.orderDetails.taxesInfo[taxKey] = Number(payload.orderDetails.taxesInfo[taxKey]);
+          }
+        });
+      }
+    });
 
     const apiUrl =
       "https://testapi.pinelabs.com/v1/billing-integration/qr-payments/transactions/digital-invoice-v2/create";
@@ -446,8 +478,8 @@ curl --location '${apiUrl}' \\
                   <div key={taxKey} className="form-field">
                     <label className="field-label">{formatFieldName(taxKey)}</label>
                     <input
-                      type="number"
-                      value={formData.orderDetails.taxesInfo[taxKey]}
+                      type="number" // Ensure numeric input
+                      value={formData.orderDetails.taxesInfo[taxKey] || ""} // Ensure value is a number
                       onChange={(e) =>
                         handleChange(e, "orderDetails", taxKey, null, "taxesInfo")
                       }
