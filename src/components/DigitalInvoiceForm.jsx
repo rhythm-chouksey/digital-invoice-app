@@ -225,34 +225,48 @@ function DigitalInvoiceForm() {
     e.preventDefault();
     setLoading(true); // Set loading to true when the API call starts
 
+    // Clone the formData to avoid directly mutating the state
+    const payload = { ...formData };
+
+    // Format the orderDateTime field to "DD-MM-YYYY HH:mm:ss"
+    if (payload.orderDetails.orderDateTime) {
+      const date = new Date(payload.orderDetails.orderDateTime);
+      const formattedDateTime = `${String(date.getDate()).padStart(2, "0")}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}-${date.getFullYear()} ${String(date.getHours()).padStart(
+        2,
+        "0"
+      )}:${String(date.getMinutes()).padStart(2, "0")}:${String(date.getSeconds()).padStart(
+        2,
+        "0"
+      )}`;
+      payload.orderDetails.orderDateTime = formattedDateTime;
+    }
+
     const apiUrl =
       "https://testapi.pinelabs.com/v1/billing-integration/qr-payments/transactions/digital-invoice-v2/create";
 
-    // Use formData as the payload
-    const payload = formData;
-
     // Construct the headers
     const headers = {
-      Authorization:
-        "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.eyJleHAiOjE3NjEwMjQzMjksImlhdCI6MTc0NTQ3MjMyOSwianRpIjoiMjFkOTJlYjYtZDdiNi00ZmM3LTk0NDktMWI2Mjk5MTExMzJhIiwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eXRlc3QucGluZWxhYnMuY29tL3JlYWxtcy9waW5lbGFicyIsInN1YiI6IjhmNzJlZjBiLTI0ZTMtNDQwZi1iZmQzLTExMTVhMDhkZjBiZCIsInR5cCI6IkJlYXJlciIsImF6cCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSIsImFjciI6IjEiLCJzY29wZSI6ImZldGNoLnBpbmUub25lLnRyYW5zYWN0aW9uLkdFVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5QT1NUIHYxLmJpbGxpbmctaW50ZWdyYXRpb24ucXItcGF5bWVudHMudHJhbnNhY3Rpb25zLmRpZ2l0YWwtaW52b2ljZS12Mi5jcmVhdGUuUE9TVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5HRVQgYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuY2FuY2VsLlBPU1Qgb2ZmbGluZV9hY2Nlc3MgdjEuYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuZGlnaXRhbC1pbnZvaWNlLXYxLmNyZWF0ZS5QT1NUIiwiY2xpZW50SG9zdCI6IjE0LjE0My4xMjAuODIiLCJleHRJZCI6IjIwMTUiLCJNZXJjaGFudElkIjoiMjAxNSIsImNsaWVudEFkZHJlc3MiOiIxNC4xNDMuMTIwLjgyIiwiY2xpZW50X2lkIjoiTWVyY2hhbnRCaWxsaW5nU2Vydl8yMDE1In0.DtG1R--rgd9HZccykXXeD7N13YCOStPTKsVMIDsDSn2VMHdBu7_Erwktt2YCm_k3tV5LMH4pwQYN6NAWGnDNlQ",
+      Authorization: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.eyJleHAiOjE3NjEwMjQzMjksImlhdCI6MTc0NTQ3MjMyOSwianRpIjoiMjFkOTJlYjYtZDdiNi00ZmM3LTk0NDktMWI2Mjk5MTExMzJhIiwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eXRlc3QucGluZWxhYnMuY29tL3JlYWxtcy9waW5lbGFicyIsInN1YiI6IjhmNzJlZjBiLTI0ZTMtNDQwZi1iZmQzLTExMTVhMDhkZjBiZCIsInR5cCI6IkJlYXJlciIsImF6cCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSIsImFjciI6IjEiLCJzY29wZSI6ImZldGNoLnBpbmUub25lLnRyYW5zYWN0aW9uLkdFVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5QT1NUIHYxLmJpbGxpbmctaW50ZWdyYXRpb24ucXItcGF5bWVudHMudHJhbnNhY3Rpb25zLmRpZ2l0YWwtaW52b2ljZS12Mi5jcmVhdGUuUE9TVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5HRVQgYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuY2FuY2VsLlBPU1Qgb2ZmbGluZV9hY2Nlc3MgdjEuYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuZGlnaXRhbC1pbnZvaWNlLXYxLmNyZWF0ZS5QT1NUIiwiY2xpZW50SG9zdCI6IjE0LjE0My4xMjAuODIiLCJleHRJZCI6IjIwMTUiLCJNZXJjaGFudElkIjoiMjAxNSIsImNsaWVudEFkZHJlc3MiOiIxNC4xNDMuMTIwLjgyIiwiY2xpZW50X2lkIjoiTWVyY2hhbnRCaWxsaW5nU2Vydl8yMDE1In0.DtG1R--rgd9HZccykXXeD7N13YCOStPTKsVMIDsDSn2VMHdBu7_Erwktt2YCm_k3tV5LMH4pwQYN6NAWGnDNlQ",
       "Content-Type": "application/json",
       "correlation-id": "123455",
     };
 
-    // Construct the curl command
+    // Log the final curl command
     const curlCommand = `
-curl -X POST ${apiUrl} \\
--H "Authorization: ${headers.Authorization}" \\
--H "Content-Type: ${headers["Content-Type"]}" \\
--H "correlation-id: ${headers["correlation-id"]}" \\
--d '${JSON.stringify(payload, null, 2)}'
-  `;
-    console.log("CURL Command:", curlCommand); // Log the curl command
+curl --location '${apiUrl}' \\
+--header 'Authorization: ${headers.Authorization}' \\
+--header 'Content-Type: ${headers["Content-Type"]}' \\
+--header 'correlation-id: ${headers["correlation-id"]}' \\
+--data-raw '${JSON.stringify(payload, null, 2)}'
+    `;
+    console.log("Final CURL Command:\n", curlCommand);
 
     try {
       const response = await axios.post(apiUrl, payload, { headers });
       setPopupType("success");
-      setPopupMessage("Invoice uploaded successfully!"); // Updated success message
+      setPopupMessage("Invoice uploaded successfully!");
       console.log("Response:", response.data);
     } catch (error) {
       setPopupType("error");
@@ -332,14 +346,34 @@ curl -X POST ${apiUrl} \\
     if (section === "orderDetails") {
       return (
         <>
-          {/* Group other order details fields */}
           <div className="form-field">
             <h5>Order Details</h5>
             <div className="order-details-block">
+              {/* Render all fields in Order Details */}
               {Object.keys(formData[section]).map((key) => {
-                if (key === "productsData" || key === "payments" || key === "taxesInfo" || key === "loyaltyData") {
+                if (
+                  key === "productsData" ||
+                  key === "payments" ||
+                  key === "taxesInfo" ||
+                  key === "loyaltyData"
+                ) {
                   // Skip rendering these keys for now; we'll handle them later
                   return null;
+                }
+                if (key === "orderDateTime") {
+                  // Render Order Date Time with a date-time picker including seconds
+                  return (
+                    <div key={key} className="form-field">
+                      <label className="field-label">{formatFieldName(key)}</label>
+                      <input
+                        type="datetime-local"
+                        step="1" // Allows selection of seconds
+                        value={formData[section][key]}
+                        onChange={(e) => handleChange(e, section, key)}
+                        className="field-input"
+                      />
+                    </div>
+                  );
                 }
                 return (
                   <div key={key} className="form-field">
@@ -373,6 +407,7 @@ curl -X POST ${apiUrl} \\
                     >
                       <option value="UPI">UPI</option>
                       <option value="CARD">CARD</option>
+                      <option value="CASH">CASH</option>
                     </select>
                   </div>
                   <div className="form-field">
@@ -382,6 +417,17 @@ curl -X POST ${apiUrl} \\
                       value={payment.total}
                       onChange={(e) =>
                         handleChange(e, "orderDetails", "total", index, "payments")
+                      }
+                      className="field-input"
+                    />
+                  </div>
+                  <div className="form-field">
+                    <label className="field-label">Status</label>
+                    <input
+                      type="text"
+                      value={payment.status}
+                      onChange={(e) =>
+                        handleChange(e, "orderDetails", "status", index, "payments")
                       }
                       className="field-input"
                     />
@@ -396,25 +442,19 @@ curl -X POST ${apiUrl} \\
             <div className="form-field">
               <h5>Taxes Info</h5>
               <div className="tax-info-block">
-                {Object.keys(formData.orderDetails.taxesInfo).map((taxKey) => {
-                  if (taxKey === "cgstPercent") {
-                    // Skip rendering cgstPercent
-                    return null;
-                  }
-                  return (
-                    <div key={taxKey} className="form-field">
-                      <label className="field-label">{formatFieldName(taxKey)}</label>
-                      <input
-                        type="number"
-                        value={formData.orderDetails.taxesInfo[taxKey]}
-                        onChange={(e) =>
-                          handleChange(e, "orderDetails", taxKey, null, "taxesInfo")
-                        }
-                        className="field-input"
-                      />
-                    </div>
-                  );
-                })}
+                {Object.keys(formData.orderDetails.taxesInfo).map((taxKey) => (
+                  <div key={taxKey} className="form-field">
+                    <label className="field-label">{formatFieldName(taxKey)}</label>
+                    <input
+                      type="number"
+                      value={formData.orderDetails.taxesInfo[taxKey]}
+                      onChange={(e) =>
+                        handleChange(e, "orderDetails", taxKey, null, "taxesInfo")
+                      }
+                      className="field-input"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           )}
