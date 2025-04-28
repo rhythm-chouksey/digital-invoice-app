@@ -128,12 +128,7 @@ function DigitalInvoiceForm() {
   };
 
   const handleChange = (e, section, key, index = null, nestedKey = null) => {
-    let value = e.target.value;
-
-    // Convert to number if the value is numeric
-    if (!isNaN(value) && value.trim() !== "") {
-      value = Number(value);
-    }
+    const value = e.target.value; // Always treat input as a string
 
     setFormData((prev) => {
       if (nestedKey && index !== null) {
