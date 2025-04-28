@@ -131,34 +131,85 @@ function DigitalInvoiceForm() {
     const value = e.target.type === "number" ? Number(e.target.value) : e.target.value;
 
     setFormData((prev) => {
-      const updatedFormData = { ...prev };
-
-      if (nestedKey) {
-        // Handle nested keys (e.g., "productsData.taxes")
-        const nestedKeys = nestedKey.split(".");
-        let target = updatedFormData[section];
-
-        // Traverse to the correct level
-        for (let i = 0; i < nestedKeys.length - 1; i++) {
-          target = target[nestedKeys[i]];
-        }
-
-        if (index !== null) {
-          // Handle arrays (e.g., productsData)
-          target[nestedKeys[nestedKeys.length - 1]][index][key] = value;
-        } else {
-          // Handle objects (e.g., taxesInfo)
-          target[nestedKeys[nestedKeys.length - 1]][key] = value;
-        }
-      } else if (index !== null) {
-        // Handle top-level arrays (e.g., productsData)
-        updatedFormData[section][index][key] = value;
-      } else {
-        // Handle top-level fields
-        updatedFormData[section][key] = value;
+      // Handle taxes inside productsData
+      if (nestedKey === "productsData.taxes" && index !== null) {
+        const products = [...prev.orderDetails.productsData];
+        const product = { ...products[index] };
+        product.taxes = { ...product.taxes, [key]: value };
+        products[index] = product;
+        return {
+          ...prev,
+          orderDetails: {
+            ...prev.orderDetails,
+            productsData: products,
+          },
+        };
       }
 
-      return updatedFormData;
+      // Handle taxesInfo (order-level)
+      if (nestedKey === "taxesInfo") {
+        return {
+          ...prev,
+          orderDetails: {
+            ...prev.orderDetails,
+            taxesInfo: {
+              ...prev.orderDetails.taxesInfo,
+              [key]: value,
+            },
+          },
+        };
+      }
+
+      // Handle other product fields
+      if (nestedKey === "productsData" && index !== null) {
+        const products = [...prev.orderDetails.productsData];
+        products[index] = { ...products[index], [key]: value };
+        return {
+          ...prev,
+          orderDetails: {
+            ...prev.orderDetails,
+            productsData: products,
+          },
+        };
+      }
+
+      // Default handler for top-level fields
+      if (index !== null && section === "payments") {
+        const payments = [...prev.orderDetails.payments];
+        payments[index] = { ...payments[index], [key]: value };
+        return {
+          ...prev,
+          orderDetails: {
+            ...prev.orderDetails,
+            payments,
+          },
+        };
+      }
+
+      if (index !== null && section === "productsData") {
+        const products = [...prev.orderDetails.productsData];
+        products[index] = { ...products[index], [key]: value };
+        return {
+          ...prev,
+          orderDetails: {
+            ...prev.orderDetails,
+            productsData: products,
+          },
+        };
+      }
+
+      // Top-level fields
+      if (section in prev) {
+        return {
+          ...prev,
+          [section]: {
+            ...prev[section],
+            [key]: value,
+          },
+        };
+      }
+
+      return prev;
     });
   };
 
