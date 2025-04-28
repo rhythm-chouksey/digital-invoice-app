@@ -174,7 +174,7 @@ function DigitalInvoiceForm() {
       }
 
       // Default handler for top-level fields
-      if (index !== null && section === "payments") {
+      if (index !== null && nestedKey === "payments" && section === "orderDetails") {
         const payments = [...prev.orderDetails.payments];
         payments[index] = { ...payments[index], [key]: value };
         return {
