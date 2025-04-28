@@ -130,7 +130,7 @@ function DigitalInvoiceForm() {
     const value = e.target.value;
     setFormData((prev) => {
       if (nestedKey && index !== null) {
-        // Update nested array (e.g., taxes in productsData)
+        // Update deeply nested fields (e.g., taxes in productsData)
         const updatedArray = [...prev[section].productsData];
         updatedArray[index][nestedKey][key] = value;
         return {
@@ -140,8 +140,20 @@ function DigitalInvoiceForm() {
             productsData: updatedArray,
           },
         };
+      } else if (nestedKey) {
+        // Update nested objects (e.g., loyaltyData or taxesInfo)
+        return {
+          ...prev,
+          [section]: {
+            ...prev[section],
+            [nestedKey]: {
+              ...prev[section][nestedKey],
+              [key]: value,
+            },
+          },
+        };
       } else if (index !== null) {
-        // Update array (e.g., productsData)
+        // Update array fields (e.g., productsData)
         const updatedArray = [...prev[section].productsData];
         updatedArray[index][key] = value;
         return {
