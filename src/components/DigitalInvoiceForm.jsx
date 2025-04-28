@@ -14,10 +14,10 @@ function DigitalInvoiceForm() {
       gstrNo: "217686439898",
     },
     transactionInfo: {
-      clientId: "123454",
-      batchId: "09865",
-      roc: "876767",
-      txnId: "97785",
+      clientId: "0",
+      batchId: "0",
+      roc: "0",
+      txnId: "0",
       txnType: "UPI",
     },
     orderDetails: {
@@ -236,44 +236,40 @@ function DigitalInvoiceForm() {
     setLoading(true); // Set loading to true when the API call starts
 
     // Clone the formData to avoid directly mutating the state
-    const payload = { ...formData };
+    const payload = JSON.parse(JSON.stringify(formData)); // Deep clone to avoid mutation
 
-    // Format the orderDateTime field to "DD-MM-YYYY HH:mm:ss"
-    if (payload.orderDetails.orderDateTime) {
-      const date = new Date(payload.orderDetails.orderDateTime);
-      const formattedDateTime = `${String(date.getDate()).padStart(2, "0")}-${String(
-        date.getMonth() + 1
-      ).padStart(2, "0")}-${date.getFullYear()} ${String(date.getHours()).padStart(
-        2,
-        "0"
-      )}:${String(date.getMinutes()).padStart(2, "0")}:${String(date.getSeconds()).padStart(
-        2,
-        "0"
-      )}`;
-      payload.orderDetails.orderDateTime = formattedDateTime;
-    }
+    // Helper function to recursively convert numeric fields to numbers
+    const convertToNumbers = (obj) => {
+      Object.keys(obj).forEach((key) => {
+        if (typeof obj[key] === "string" && !isNaN(obj[key])) {
+          obj[key] = Number(obj[key]); // Convert numeric strings to numbers
+        } else if (typeof obj[key] === "object" && obj[key] !== null) {
+          convertToNumbers(obj[key]); // Recursively handle nested objects
+        }
+      });
+    };
 
-    // Convert all numeric fields in transactionInfo to numbers
+    const convertToString = (value) => {
+      if (value === null || value === undefined) {
+        return ""; // Handle null or undefined values
+      }
+      return String(value); // Convert the value to a string
+    };
+
+    // Convert numeric fields in transactionInfo, orderDetails, and nested objects
+    convertToNumbers(payload.transactionInfo);
+    convertToNumbers(payload.orderDetails);
+    convertToString(payload.invoiceNo);
+    convertToString(payload.hsnCode);
+    convertToString(payload.orderNo);
+    convertToString(payload.orderRegNo);
+    convertToString(payload.billingPOSNo);
+    convertToString(payload.cashierId)
+    convertToString(payload.storeCode)
     Object.keys(payload.transactionInfo).forEach((key) => {
-      if (!isNaN(payload.transactionInfo[key])) {
-        payload.transactionInfo[key] = Number(payload.transactionInfo[key]);
-      }
+      payload.transactionInfo[key] = convertToString(payload.transactionInfo[key]);
     });
 
-    // Convert all numeric fields in orderDetails to numbers
-    Object.keys(payload.orderDetails).forEach((key) => {
-      if (typeof payload.orderDetails[key] === "string" && !isNaN(payload.orderDetails[key])) {
-        payload.orderDetails[key] = Number(payload.orderDetails[key]);
-      }
-      if (key === "taxesInfo") {
-        // Convert all numeric fields in taxesInfo to numbers
-        Object.keys(payload.orderDetails.taxesInfo).forEach((taxKey) => {
-          if (!isNaN(payload.orderDetails.taxesInfo[taxKey])) {
-            payload.orderDetails.taxesInfo[taxKey] = Number(payload.orderDetails.taxesInfo[taxKey]);
-          }
-        });
-      }
-    });
 
     const apiUrl =
       "https://testapi.pinelabs.com/v1/billing-integration/qr-payments/transactions/digital-invoice-v2/create";
