@@ -160,6 +160,19 @@ function DigitalInvoiceForm() {
         };
       }
 
+      if (nestedKey === "loyaltyData") {
+        return {
+          ...prev,
+          orderDetails: {
+            ...prev.orderDetails,
+            loyaltyData: {
+              ...prev.orderDetails.loyaltyData,
+              [key]: value,
+            },
+          },
+        };
+      }
+
       // Handle other product fields
       if (nestedKey === "productsData" && index !== null) {
         const products = [...prev.orderDetails.productsData];
