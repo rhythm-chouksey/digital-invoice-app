@@ -134,10 +134,10 @@ function DigitalInvoiceForm() {
       // Determine the original value's type
       const originalValue = nestedKey
         ? index !== null
-          ? prev[section].productsData[index][nestedKey][key]
+          ? prev[section][nestedKey][index][key]
           : prev[section][nestedKey][key]
         : index !== null
-        ? prev[section].productsData[index][key]
+        ? prev[section][index][key]
         : prev[section][key];
 
       // Cast the new value to match the original value's type
@@ -146,16 +146,18 @@ function DigitalInvoiceForm() {
       }
 
       if (nestedKey && index !== null) {
-        const updatedArray = [...prev[section].productsData];
-        updatedArray[index][nestedKey][key] = value;
+        // Handle nested arrays (e.g., payments)
+        const updatedArray = [...prev[section][nestedKey]];
+        updatedArray[index][key] = value;
         return {
           ...prev,
           [section]: {
             ...prev[section],
-            productsData: updatedArray,
+            [nestedKey]: updatedArray,
           },
         };
       } else if (nestedKey) {
+        // Handle nested objects
         return {
           ...prev,
           [section]: {
@@ -167,16 +169,16 @@ function DigitalInvoiceForm() {
           },
         };
       } else if (index !== null) {
-        const updatedArray = [...prev[section].productsData];
+        // Handle arrays (e.g., productsData)
+        const updatedArray = [...prev[section]];
         updatedArray[index][key] = value;
         return {
           ...prev,
-          [section]: {
-            ...prev[section],
-            productsData: updatedArray,
-          },
+          [section]: updatedArray,
         };
       }
+
+      // Handle top-level fields
       return {
         ...prev,
         [section]: {
