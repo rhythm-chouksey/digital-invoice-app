@@ -118,6 +118,7 @@ function DigitalInvoiceForm() {
   const [activeTab, setActiveTab] = useState("customerInfo");
   const [popupMessage, setPopupMessage] = useState(null);
   const [popupType, setPopupType] = useState("success"); // or "error"
+  const [loading, setLoading] = useState(false); // State to track loading
 
   // Utility function to format field names
   const formatFieldName = (fieldName) => {
@@ -227,8 +228,10 @@ function DigitalInvoiceForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true when the API call starts
 
-    const apiUrl = "https://testapi.pinelabs.com/v1/billing-integration/qr-payments/transactions/digital-invoice-v2/create";
+    const apiUrl =
+      "https://testapi.pinelabs.com/v1/billing-integration/qr-payments/transactions/digital-invoice-v2/create";
 
     // Use formData as the payload
     const payload = formData;
@@ -241,26 +244,27 @@ function DigitalInvoiceForm() {
       "correlation-id": "123455",
     };
 
-    // Log the equivalent curl command
+    // Construct the curl command
     const curlCommand = `
-curl --location '${apiUrl}' \\
---header 'Authorization: ${headers.Authorization}' \\
---header 'Content-Type: ${headers["Content-Type"]}' \\
---header 'correlation-id: ${headers["correlation-id"]}' \\
---data-raw '${JSON.stringify(payload, null, 2)}'
+curl -X POST ${apiUrl} \\
+-H "Authorization: ${headers.Authorization}" \\
+-H "Content-Type: ${headers["Content-Type"]}" \\
+-H "correlation-id: ${headers["correlation-id"]}" \\
+-d '${JSON.stringify(payload, null, 2)}'
   `;
-    console.log("Equivalent curl command:", curlCommand);
+    console.log("CURL Command:", curlCommand); // Log the curl command
 
-    // Make the API request
     try {
       const response = await axios.post(apiUrl, payload, { headers });
       setPopupType("success");
-      setPopupMessage("API call successful!");
+      setPopupMessage("Invoice uploaded successfully!"); // Updated success message
       console.log("Response:", response.data);
     } catch (error) {
       setPopupType("error");
       setPopupMessage(error.response?.data?.message || "API call failed!");
       console.error("Error:", error.response?.data || error.message);
+    } finally {
+      setLoading(false); // Set loading to false when the API call completes
     }
   };
 
@@ -513,6 +517,11 @@ curl --location '${apiUrl}' \\
           Submit
         </button>
       </form>
+      {loading && (
+  <div className="loading-toast">
+    <div className="spinner"></div>
+  </div>
+)}
       {popupMessage && (
         <div className={`popup ${popupType}`}>
           <h3>{popupType === "success" ? "Success" : "Error"}</h3>
