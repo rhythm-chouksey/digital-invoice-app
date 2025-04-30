@@ -19,9 +19,9 @@ function DigitalInvoiceForm() {
   const defaultFormData = {
     customerInfo: {
       mobile: "9910403116",
+      countryCode: "+91", // moved below mobile
       name: "Rhythm",
       email: "rhythm.chouksey@example.com",
-      countryCode: "+91",
       gstrName: "Ramandeep",
       gstrMob: "9764775793",
       gstrNo: "217686439898",
@@ -61,8 +61,8 @@ function DigitalInvoiceForm() {
       orderRegNo: "1",
       productsData: [
         {
-          name: "BLACK LOGO PRINT CREW NECK T-SHIRT",
-          description: "Premium t-shirt",
+          name: "Pizza",
+          description: "Pizza",
           productCode: "A123",
           quantity: 1,
           unitAmount: 300,
@@ -81,12 +81,12 @@ function DigitalInvoiceForm() {
           },
         },
         {
-          name: "BLACK LOGO RISE WASHED GLENN SLIM FIT JEANS",
-          description: "BLACK LOGO RISE WASHED GLENN SLIM FIT JEANS",
+          name: "Burger",
+          description: "Burger",
           productCode: "A124",
           quantity: 2,
-          unitAmount: 700,
-          totalAmount: 1400,
+          unitAmount: 200,
+          totalAmount: 200,
           hsnCode: "6276462",
           discount: 0,
           taxes: {
@@ -146,7 +146,15 @@ function DigitalInvoiceForm() {
       gstrMob: "Gst Reg Mob",
       gstrName: "Gst Reg Name",
       billingPOSNo: "Billing POS No",
-      cashierId: "Cashier ID"
+      cashierId: "Cashier ID",
+      netPayableAmount: "Net Payable Amount (Rs.)",
+      subTotal: "Sub Total (Rs.)",
+      total: "Total (Rs.)",
+      clientId: "Client ID",
+      batchId: "Batch ID",
+      totalAmount: "Total Amount (Rs.)",
+      unitAmount: "Unit Amount (Rs.)"
+
     };
     if (customLabels[fieldName]) return customLabels[fieldName];
 
@@ -486,7 +494,39 @@ curl --location '${apiUrl}' \\
     }
   };
 
+  const customerInfoOrder = [
+    "mobile",
+    "countryCode",
+    "name",
+    "email",
+    "gstrName",
+    "gstrMob",
+    "gstrNo",
+  ];
+
   const renderFields = (section) => {
+    if (section === "customerInfo") {
+      return customerInfoOrder.map((key) => {
+        const isMandatory =
+          (mandatoryFields[section] && mandatoryFields[section].includes(key)) ||
+          false;
+        return (
+          <div key={key} className="form-field">
+            <label className="field-label">
+              {formatFieldName(key)}
+              {isMandatory && <span style={{ color: "red" }}> *</span>}
+            </label>
+            <input
+              type="text"
+              value={formData[section][key]}
+              onChange={(e) => handleChange(e, section, key)}
+              className="field-input"
+            />
+          </div>
+        );
+      });
+    }
+
     if (section === "productsData") {
       return (
         <>
@@ -648,7 +688,8 @@ curl --location '${apiUrl}' \\
                 <div key={index} className="payment-block">
                   <div className="form-field">
                     <label className="field-label">
-                      Mode<span style={{ color: "red" }}> *</span>
+                      {formatFieldName("mode")}
+                      <span style={{ color: "red" }}> *</span>
                     </label>
                     <select
                       value={payment.mode}
@@ -664,7 +705,8 @@ curl --location '${apiUrl}' \\
                   </div>
                   <div className="form-field">
                     <label className="field-label">
-                      Total<span style={{ color: "red" }}> *</span>
+                      {formatFieldName("total")}
+                      <span style={{ color: "red" }}> *</span>
                     </label>
                     <input
                       type="number"
@@ -676,7 +718,7 @@ curl --location '${apiUrl}' \\
                     />
                   </div>
                   <div className="form-field">
-                    <label className="field-label">Status</label>
+                    <label className="field-label">{formatFieldName("status")}</label>
                     <input
                       type="text"
                       value={payment.status}
