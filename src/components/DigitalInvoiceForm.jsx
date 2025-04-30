@@ -3,6 +3,19 @@ import axios from "axios";
 import "./DigitalInvoiceForm.css";
 
 function DigitalInvoiceForm() {
+  // Helper to get current date-time in "DD-MM-YYYY HH:mm:ss" format
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const pad = (n) => n.toString().padStart(2, "0");
+    const day = pad(now.getDate());
+    const month = pad(now.getMonth() + 1);
+    const year = now.getFullYear();
+    const hours = pad(now.getHours());
+    const minutes = pad(now.getMinutes());
+    const seconds = pad(now.getSeconds());
+    return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+  };
+
   const defaultFormData = {
     customerInfo: {
       mobile: "",
@@ -101,7 +114,7 @@ function DigitalInvoiceForm() {
       },
       cashierId: "475117",
       cashierName: "Krishna",
-      orderDateTime: "13-09-2024 17:20:51",
+      orderDateTime: getCurrentDateTime(), // Set default to current date-time
     },
     billFooterData: {
       disclaimer: "disclaimer testing",
@@ -110,7 +123,8 @@ function DigitalInvoiceForm() {
       feedbackDiscount: 0,
       feedbackLink: "https://company.co.in/",
       orderInstructions: "Please provide black Umbrella",
-      footerInfo: "GSTIN-27AAAFH1333H1ZT         \n         GST Classification -         \n    Restaurant Services SAC-996331    \n        FSSAI : 11517007000202        \n We value your feedback. Share it to: \n     myfeedback@mcdonaldsindia.com     \n # The collection of donation is done \n  on behalf of Ronald McDonald House  \nCharities Foundation India (RMHC India)\n  on a principal-to-principal basis.",
+      footerInfo:
+        "GSTIN-27AAAFH1333H1ZT         \n         GST Classification -         \n    Restaurant Services SAC-996331    \n        FSSAI : 11517007000202        \n We value your feedback. Share it to: \n     myfeedback@mcdonaldsindia.com     \n # The collection of donation is done \n  on behalf of Ronald McDonald House  \nCharities Foundation India (RMHC India)\n  on a principal-to-principal basis.",
     },
   };
 
@@ -453,14 +467,39 @@ curl --location '${apiUrl}' \\
                 }
                 if (key === "orderDateTime") {
                   // Render Order Date Time with a date-time picker including seconds
+                  // Custom handler to keep format as "DD-MM-YYYY HH:mm:ss"
+                  const formatDateTimeForInput = (value) => {
+                    // Convert "13-09-2024 17:20:51" to "2024-09-13T17:20:51"
+                    if (!value) return "";
+                    const [date, time] = value.split(" ");
+                    if (!date || !time) return "";
+                    const [day, month, year] = date.split("-");
+                    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}T${time}`;
+                  };
+
+                  const formatDateTimeForState = (value) => {
+                    // Convert "2024-09-13T17:20:51" to "13-09-2024 17:20:51"
+                    if (!value) return "";
+                    const [date, time] = value.split("T");
+                    if (!date || !time) return "";
+                    const [year, month, day] = date.split("-");
+                    return `${day}-${month}-${year} ${time}`;
+                  };
+
                   return (
                     <div key={key} className="form-field">
                       <label className="field-label">{formatFieldName(key)}</label>
                       <input
                         type="datetime-local"
-                        step="1" // Allows selection of seconds
-                        value={formData[section][key]}
-                        onChange={(e) => handleChange(e, section, key)}
+                        step="1"
+                        value={formatDateTimeForInput(formData[section][key])}
+                        onChange={(e) =>
+                          handleChange(
+                            { target: { value: formatDateTimeForState(e.target.value) } },
+                            section,
+                            key
+                          )
+                        }
                         className="field-input"
                       />
                     </div>
