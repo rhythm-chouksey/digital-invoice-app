@@ -90,14 +90,14 @@ function DigitalInvoiceForm() {
       ],
       purchasedPieces: 3,
       invoiceNo: "5286",
-      barCode: "barcode_data",
+      barCode: "",
       loyaltyData: {
-        type: "cashback",
-        cardNum: "V1218199412",
-        pointsEarned: 127,
-        walletAmount: 1500,
-        amountSaved: 50,
-        pointsRedeemed: 127,
+        type: "",
+        cardNum: "",
+        pointsEarned: 0,
+        walletAmount: 0,
+        amountSaved: 0,
+        pointsRedeemed: 0,
       },
       cashierId: "475117",
       cashierName: "Krishna",
@@ -122,6 +122,17 @@ function DigitalInvoiceForm() {
 
   // Utility function to format field names
   const formatFieldName = (fieldName) => {
+    // Custom label mapping
+    const customLabels = {
+      barCode: "Barcode Number",
+      gstrNo: "Gst Reg No",
+      gstrMob: "Gst Reg Mob",
+      gstrName: "Gst Reg Name",
+      billingPOSNo: "Billing POS No",
+      cashierId: "Cashier ID"
+    };
+    if (customLabels[fieldName]) return customLabels[fieldName];
+
     return fieldName
       .replace(/([A-Z])/g, " $1") // Add space before capital letters
       .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
@@ -315,7 +326,7 @@ function DigitalInvoiceForm() {
 
     // Construct the headers
     const headers = {
-      Authorization: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.eyJleHAiOjE3NjEwMjQzMjksImlhdCI6MTc0NTQ3MjMyOSwianRpIjoiMjFkOTJlYjYtZDdiNi00ZmM3LTk0NDktMWI2Mjk5MTExMzJhIiwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eXRlc3QucGluZWxhYnMuY29tL3JlYWxtcy9waW5lbGFicyIsInN1YiI6IjhmNzJlZjBiLTI0ZTMtNDQwZi1iZmQzLTExMTVhMDhkZjBiZCIsInR5cCI6IkJlYXJlciIsImF6cCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSIsImFjciI6IjEiLCJzY29wZSI6ImZldGNoLnBpbmUub25lLnRyYW5zYWN0aW9uLkdFVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5QT1NUIHYxLmJpbGxpbmctaW50ZWdyYXRpb24ucXItcGF5bWVudHMudHJhbnNhY3Rpb25zLmRpZ2l0YWwtaW52b2ljZS12Mi5jcmVhdGUuUE9TVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5HRVQgYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuY2FuY2VsLlBPU1Qgb2ZmbGluZV9hY2Nlc3MgdjEuYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuZGlnaXRhbC1pbnZvaWNlLXYxLmNyZWF0ZS5QT1NUIiwiY2xpZW50SG9zdCI6IjE0LjE0My4xMjAuODIiLCJleHRJZCI6IjIwMTUiLCJNZXJjaGFudElkIjoiMjAxNSIsImNsaWVudEFkZHJlc3MiOiIxNC4xNDMuMTIwLjgyIiwiY2xpZW50X2lkIjoiTWVyY2hhbnRCaWxsaW5nU2Vydl8yMDE1In0.DtG1R--rgd9HZccykXXeD7N13YCOStPTKsVMIDsDSn2VMHdBu7_Erwktt2YCm_k3tV5LMH4pwQYN6NAWGnDNlQ",
+      Authorization: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.eyJleHAiOjE3NjEwMjQzMjksImlhdCI6MTc0NTQ3MjMyOSwianRpIjoiMjFkOTJlYjYtZDdiNi00ZmM3LTk0NDktMWI2Mjk5MTExMzJhIiwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eXRlc3QucGluZWxhYnMuY29tL3JlYWxtcy9waW5lbGFicyIsInN1YiI6IjhmNzJlZjBiLTI0ZTMtNDQwZi1iZmQzLTExMTVhMDhkZjBiZCIsInR5cCI6IkJlYXJlciIsImF6cCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSIsImFjciI6IjEiLCJzY29wZSI6ImZldGNoLnBpbmUub25lLnRyYW5zYWN0aW9uLkdFVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5QT1NUIHYxLmJpbGxpbmctaW50ZWdyYXRpb24ucXItcGF5bWVudHMudHJhbnNhY3Rpb25zLmRpZ2l0YWwtaW52b2ljZS12Mi5jcmVhdGUuUE9TVCBiaWxsaW5nLWludGVnZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuY2FuY2VsLlBPU1Qgb2ZmbGluZV9hY2Nlc3MgdjEuYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuZGlnaXRhbC1pbnZvaWNlLXYxLmNyZWF0ZS5QT1NUIiwiY2xpZW50SG9zdCI6IjE0LjE0My4xMjAuODIiLCJleHRJZCI6IjIwMTUiLCJNZXJjaGFudElkIjoiMjAxNSIsImNsaWVudEFkZHJlc3MiOiIxNC4xNDMuMTIwLjgyIiwiY2xpZW50X2lkIjoiTWVyY2hhbnRCaWxsaW5nU2Vydl8yMDE1In0.DtG1R--rgd9HZccykXXeD7N13YCOStPTKsVMIDsDSn2VMHdBu7_Erwktt2YCm_k3tV5LMH4pwQYN6NAWGnDNlQ",
       "Content-Type": "application/json",
       "correlation-id": "123455",
     };
@@ -553,17 +564,36 @@ curl --location '${apiUrl}' \\
       );
     }
 
-    return Object.keys(formData[section]).map((key) => (
-      <div key={key} className="form-field">
-        <label className="field-label">{formatFieldName(key)}</label>
-        <input
-          type="text"
-          value={formData[section][key]}
-          onChange={(e) => handleChange(e, section, key)}
-          className="field-input"
-        />
-      </div>
-    ));
+    return Object.keys(formData[section]).map((key) => {
+      // Add dropdown for txnType in transactionInfo
+      if (section === "transactionInfo" && key === "txnType") {
+        return (
+          <div key={key} className="form-field">
+            <label className="field-label">{formatFieldName(key)}</label>
+            <select
+              value={formData[section][key]}
+              onChange={(e) => handleChange(e, section, key)}
+              className="field-input"
+            >
+              <option value="UPI">UPI</option>
+              <option value="CARD">CARD</option>
+              <option value="CASH">CASH</option>
+            </select>
+          </div>
+        );
+      }
+      return (
+        <div key={key} className="form-field">
+          <label className="field-label">{formatFieldName(key)}</label>
+          <input
+            type="text"
+            value={formData[section][key]}
+            onChange={(e) => handleChange(e, section, key)}
+            className="field-input"
+          />
+        </div>
+      );
+    });
   };
 
   return (
