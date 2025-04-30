@@ -18,7 +18,7 @@ function DigitalInvoiceForm() {
 
   const defaultFormData = {
     customerInfo: {
-      mobile: "",
+      mobile: "9910403116",
       name: "Rhythm",
       email: "rhythm.chouksey@example.com",
       countryCode: "+91",
@@ -27,9 +27,9 @@ function DigitalInvoiceForm() {
       gstrNo: "217686439898",
     },
     transactionInfo: {
-      clientId: "0",
-      batchId: "0",
-      roc: "0",
+      clientId: "2791182",
+      batchId: "9188",
+      roc: "159",
       txnId: "0",
       txnType: "UPI",
     },
@@ -153,6 +153,106 @@ function DigitalInvoiceForm() {
     return fieldName
       .replace(/([A-Z])/g, " $1") // Add space before capital letters
       .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
+  };
+
+  // List of mandatory fields
+  const mandatoryFields = {
+    customerInfo: ["mobile", "countryCode"],
+    transactionInfo: ["clientId", "batchId", "roc"],
+    orderDetails: [
+      "storeCode",
+      "storeAddress",
+      "billingPOSNo",
+      "netPayableAmount",
+      "orderNo",
+      "cashierId",
+      "cashierName",
+      "orderDateTime",
+    ],
+    payments: ["mode", "total"],
+    productsData: ["name", "productCode", "quantity", "unitAmount", "totalAmount"],
+    billFooterData: ["footerInfo"],
+  };
+
+  // Validation function
+  const isFormValid = () => {
+    // Customer Info
+    for (const field of mandatoryFields.customerInfo) {
+      if (
+        !formData.customerInfo[field] ||
+        formData.customerInfo[field] === "" ||
+        formData.customerInfo[field] === 0
+      ) {
+        return false;
+      }
+    }
+    // Transaction Info
+    for (const field of mandatoryFields.transactionInfo) {
+      if (
+        !formData.transactionInfo[field] ||
+        formData.transactionInfo[field] === "" ||
+        formData.transactionInfo[field] === 0
+      ) {
+        return false;
+      }
+    }
+    // Order Details
+    for (const field of mandatoryFields.orderDetails) {
+      if (
+        !formData.orderDetails[field] ||
+        formData.orderDetails[field] === "" ||
+        formData.orderDetails[field] === 0
+      ) {
+        return false;
+      }
+    }
+    // Payments (at least one, all mandatory fields)
+    if (
+      !formData.orderDetails.payments ||
+      formData.orderDetails.payments.length === 0
+    ) {
+      return false;
+    }
+    for (const payment of formData.orderDetails.payments) {
+      for (const field of mandatoryFields.payments) {
+        if (
+          !payment[field] ||
+          payment[field] === "" ||
+          payment[field] === 0
+        ) {
+          return false;
+        }
+      }
+    }
+    // Products Data (at least one, all mandatory fields)
+    if (
+      !formData.orderDetails.productsData ||
+      formData.orderDetails.productsData.length === 0
+    ) {
+      return false;
+    }
+    for (const product of formData.orderDetails.productsData) {
+      for (const field of mandatoryFields.productsData) {
+        if (
+          !product[field] ||
+          product[field] === "" ||
+          product[field] === 0
+        ) {
+          return false;
+        }
+      }
+    }
+    // Bill Footer Data
+    for (const field of mandatoryFields.billFooterData) {
+      if (
+        !formData.billFooterData[field] ||
+        formData.billFooterData[field] === "" ||
+        formData.billFooterData[field] === 0
+      ) {
+        return false;
+      }
+    }
+    return true;
   };
 
   const handleChange = (e, section, key, index = null, nestedKey = null) => {
@@ -309,6 +409,11 @@ function DigitalInvoiceForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isFormValid()) {
+      setPopupType("error");
+      setPopupMessage("Please fill all mandatory fields marked with *.");
+      return;
+    }
     setLoading(true); // Set loading to true when the API call starts
 
     // Clone the formData to avoid directly mutating the state
@@ -370,7 +475,7 @@ curl --location '${apiUrl}' \\
     try {
       const response = await axios.post(apiUrl, payload, { headers });
       setPopupType("success");
-      setPopupMessage("Invoice uploaded successfully!");
+      setPopupMessage("Invoice sent successfully!");
       console.log("Response:", response.data);
     } catch (error) {
       setPopupType("error");
@@ -414,13 +519,20 @@ curl --location '${apiUrl}' \\
                         </div>
                       );
                     }
+                    const isMandatory =
+                      mandatoryFields.productsData.includes(key);
                     return (
                       <div key={key} className="form-field">
-                        <label className="field-label">{formatFieldName(key)}</label>
+                        <label className="field-label">
+                          {formatFieldName(key)}
+                          {isMandatory && <span style={{ color: "red" }}> *</span>}
+                        </label>
                         <input
                           type="text"
                           value={product[key] || ""} // Default to empty string if undefined
-                          onChange={(e) => handleChange(e, "orderDetails", key, index, "productsData")}
+                          onChange={(e) =>
+                            handleChange(e, "orderDetails", key, index, "productsData")
+                          }
                           className="field-input"
                         />
                       </div>
@@ -505,9 +617,17 @@ curl --location '${apiUrl}' \\
                     </div>
                   );
                 }
+                // Mark label with * if mandatory
+                const isMandatory =
+                  (mandatoryFields[section] && mandatoryFields[section].includes(key)) ||
+                  false;
+
                 return (
                   <div key={key} className="form-field">
-                    <label className="field-label">{formatFieldName(key)}</label>
+                    <label className="field-label">
+                      {formatFieldName(key)}
+                      {isMandatory && <span style={{ color: "red" }}> *</span>}
+                    </label>
                     <input
                       type="text"
                       value={formData[section][key]}
@@ -527,7 +647,9 @@ curl --location '${apiUrl}' \\
               {formData.orderDetails.payments.map((payment, index) => (
                 <div key={index} className="payment-block">
                   <div className="form-field">
-                    <label className="field-label">Mode</label>
+                    <label className="field-label">
+                      Mode<span style={{ color: "red" }}> *</span>
+                    </label>
                     <select
                       value={payment.mode}
                       onChange={(e) =>
@@ -541,7 +663,9 @@ curl --location '${apiUrl}' \\
                     </select>
                   </div>
                   <div className="form-field">
-                    <label className="field-label">Total</label>
+                    <label className="field-label">
+                      Total<span style={{ color: "red" }}> *</span>
+                    </label>
                     <input
                       type="number"
                       value={payment.total}
@@ -632,9 +756,17 @@ curl --location '${apiUrl}' \\
           </div>
         );
       }
+      // Mark label with * if mandatory
+      const isMandatory =
+        (mandatoryFields[section] && mandatoryFields[section].includes(key)) ||
+        false;
+
       return (
         <div key={key} className="form-field">
-          <label className="field-label">{formatFieldName(key)}</label>
+          <label className="field-label">
+            {formatFieldName(key)}
+            {isMandatory && <span style={{ color: "red" }}> *</span>}
+          </label>
           <input
             type="text"
             value={formData[section][key]}
@@ -697,7 +829,11 @@ curl --location '${apiUrl}' \\
         {activeTab === "billFooterData" && (
           <div className="form-section">{renderFields("billFooterData")}</div>
         )}
-        <button type="submit" className="submit-button">
+        <button
+          type="submit"
+          className="submit-button"
+          disabled={!isFormValid()}
+        >
           Submit
         </button>
       </form>
