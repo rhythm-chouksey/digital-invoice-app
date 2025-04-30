@@ -5,9 +5,9 @@ import "./DigitalInvoiceForm.css";
 function DigitalInvoiceForm() {
   const defaultFormData = {
     customerInfo: {
-      mobile: "7906059714",
-      name: "Aarav Rubral",
-      email: "customer_6383575597@example.com",
+      mobile: "",
+      name: "Rhythm",
+      email: "rhythm.chouksey@example.com",
       countryCode: "+91",
       gstrName: "Ramandeep",
       gstrMob: "9764775793",
@@ -119,6 +119,9 @@ function DigitalInvoiceForm() {
   const [popupMessage, setPopupMessage] = useState(null);
   const [popupType, setPopupType] = useState("success"); // or "error"
   const [loading, setLoading] = useState(false); // State to track loading
+
+  // Add state for delete confirmation
+  const [deleteProductIndex, setDeleteProductIndex] = useState(null);
 
   // Utility function to format field names
   const formatFieldName = (fieldName) => {
@@ -268,9 +271,13 @@ function DigitalInvoiceForm() {
   };
 
   const handleDeleteProduct = (index) => {
+    setDeleteProductIndex(index); // Show confirmation prompt
+  };
+
+  const confirmDeleteProduct = () => {
     setFormData((prev) => {
       const updatedArray = [...prev.orderDetails.productsData];
-      updatedArray.splice(index, 1); // Remove the product at the given index
+      updatedArray.splice(deleteProductIndex, 1);
       return {
         ...prev,
         orderDetails: {
@@ -279,6 +286,11 @@ function DigitalInvoiceForm() {
         },
       };
     });
+    setDeleteProductIndex(null); // Hide prompt after deletion
+  };
+
+  const cancelDeleteProduct = () => {
+    setDeleteProductIndex(null); // Hide prompt without deleting
   };
 
   const handleSubmit = async (e) => {
@@ -362,7 +374,6 @@ curl --location '${apiUrl}' \\
           {formData.orderDetails.productsData &&
             formData.orderDetails.productsData.map((product, index) => (
               <div key={index} className="product-block">
-                <h3>Product {index + 1}</h3>
                 <div className="product-fields">
                   {Object.keys(product).map((key) => {
                     if (key === "taxes") {
@@ -661,6 +672,18 @@ curl --location '${apiUrl}' \\
           <h3>{popupType === "success" ? "Success" : "Error"}</h3>
           <p>{popupMessage}</p>
           <button onClick={() => setPopupMessage(null)}>Close</button>
+        </div>
+      )}
+
+      {/* Delete confirmation prompt */}
+      {deleteProductIndex !== null && (
+        <div className="popup">
+          <h3>Delete Product</h3>
+          <p>Do you want to delete this product?</p>
+          <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+            <button onClick={confirmDeleteProduct}>Yes</button>
+            <button onClick={cancelDeleteProduct}>No</button>
+          </div>
         </div>
       )}
     </div>

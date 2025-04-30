@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/digital-invoice-app/static/css/main.85d503c4.chunk.css",
-    "main.js": "/digital-invoice-app/static/js/main.c561d329.chunk.js",
-    "main.js.map": "/digital-invoice-app/static/js/main.c561d329.chunk.js.map",
+    "main.css": "/digital-invoice-app/static/css/main.bd0cc538.chunk.css",
+    "main.js": "/digital-invoice-app/static/js/main.d8487890.chunk.js",
+    "main.js.map": "/digital-invoice-app/static/js/main.d8487890.chunk.js.map",
     "runtime-main.js": "/digital-invoice-app/static/js/runtime-main.7feb63d1.js",
     "runtime-main.js.map": "/digital-invoice-app/static/js/runtime-main.7feb63d1.js.map",
     "static/js/2.68baab18.chunk.js": "/digital-invoice-app/static/js/2.68baab18.chunk.js",
     "static/js/2.68baab18.chunk.js.map": "/digital-invoice-app/static/js/2.68baab18.chunk.js.map",
     "index.html": "/digital-invoice-app/index.html",
-    "static/css/main.85d503c4.chunk.css.map": "/digital-invoice-app/static/css/main.85d503c4.chunk.css.map",
+    "static/css/main.bd0cc538.chunk.css.map": "/digital-invoice-app/static/css/main.bd0cc538.chunk.css.map",
     "static/js/2.68baab18.chunk.js.LICENSE.txt": "/digital-invoice-app/static/js/2.68baab18.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.7feb63d1.js",
     "static/js/2.68baab18.chunk.js",
-    "static/css/main.85d503c4.chunk.css",
-    "static/js/main.c561d329.chunk.js"
+    "static/css/main.bd0cc538.chunk.css",
+    "static/js/main.d8487890.chunk.js"
   ]
 }
