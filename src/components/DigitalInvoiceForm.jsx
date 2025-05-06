@@ -65,8 +65,9 @@ function DigitalInvoiceForm() {
           description: "Pizza",
           productCode: "A123",
           quantity: 1,
-          unitAmount: 300,
-          totalAmount: 250,
+          mrp: 300, // was unitAmount
+          baseAmount: 250, // was totalAmount
+          netAmount: 250,
           hsnCode: "6276462",
           discount: 50,
           taxes: {
@@ -85,8 +86,9 @@ function DigitalInvoiceForm() {
           description: "Burger",
           productCode: "A124",
           quantity: 2,
-          unitAmount: 200,
-          totalAmount: 200,
+          mrp: 300, // was unitAmount
+          baseAmount: 250, // was totalAmount
+          netAmount: 200,
           hsnCode: "6276462",
           discount: 0,
           taxes: {
@@ -152,8 +154,9 @@ function DigitalInvoiceForm() {
       total: "Total (Rs.)",
       clientId: "Client ID",
       batchId: "Batch ID",
-      totalAmount: "Total Amount (Rs.)",
-      unitAmount: "Unit Amount (Rs.)"
+      mrp: "MRP (Rs.)",
+      baseAmount: "Base Amount (Rs.)",
+      netAmount: "Net Amount (Rs.)"
 
     };
     if (customLabels[fieldName]) return customLabels[fieldName];
@@ -178,7 +181,7 @@ function DigitalInvoiceForm() {
       "orderDateTime",
     ],
     payments: ["mode", "total"],
-    productsData: ["name", "productCode", "quantity", "unitAmount", "totalAmount"],
+    productsData: ["name", "productCode", "quantity", "mrp", "baseAmount", "netAmount"],
     billFooterData: ["footerInfo"],
   };
 
@@ -368,8 +371,9 @@ function DigitalInvoiceForm() {
       description: "",
       productCode: "",
       quantity: 0,
-      unitAmount: 0,
-      totalAmount: 0,
+      mrp: 0, // was unitAmount
+      baseAmount: 0, // was totalAmount
+      netAmount: 0,
       hsnCode: "",
       discount: 0,
       taxes: {
