@@ -55,6 +55,7 @@ function DigitalInvoiceForm() {
           mode: "UPI",
           total: 13196,
           status: "SUCCESS",
+          paymentReferenceNo: "",
         },
       ],
       orderNo: "28",
@@ -65,8 +66,9 @@ function DigitalInvoiceForm() {
           description: "Pizza",
           productCode: "A123",
           quantity: 1,
-          mrp: 300, // was unitAmount
-          baseAmount: 250, // was totalAmount
+          mrp: 300,
+          uom: "unit",
+          baseAmount: 250,
           netAmount: 250,
           hsnCode: "6276462",
           discount: 50,
@@ -86,9 +88,10 @@ function DigitalInvoiceForm() {
           description: "Burger",
           productCode: "A124",
           quantity: 2,
-          mrp: 300, // was unitAmount
-          baseAmount: 250, // was totalAmount
-          netAmount: 200,
+          mrp: 200,
+          uom: "unit",
+          baseAmount: 200,
+          netAmount: 250,
           hsnCode: "6276462",
           discount: 0,
           taxes: {
@@ -117,6 +120,8 @@ function DigitalInvoiceForm() {
       cashierId: "475117",
       cashierName: "Krishna",
       orderDateTime: getCurrentDateTime(), // Set default to current date-time
+      eReceiptOpted: true,
+      printOpted: true,
     },
     billFooterData: {
       disclaimer: "disclaimer testing",
@@ -127,6 +132,31 @@ function DigitalInvoiceForm() {
       orderInstructions: "Please provide black Umbrella",
       footerInfo:
         "GSTIN-27AAAFH1333H1ZT         \n         GST Classification -         \n    Restaurant Services SAC-996331    \n        FSSAI : 11517007000202        \n We value your feedback. Share it to: \n     myfeedback@mcdonaldsindia.com     \n # The collection of donation is done \n  on behalf of Ronald McDonald House  \nCharities Foundation India (RMHC India)\n  on a principal-to-principal basis.",
+    },
+    //ADDING STORE INFO
+    store: {
+      address: {
+        addressLine1: "Hardcastle Restaurants Pvt. Ltd.,   \n     McDonald's Family Restaurant     \n   Unit No 2 and 3, Shivai Industry   \n            Tel- 8928304109",
+        addressLine2: "Address Line 2",
+        addressLine3: "Address Line 3",
+        city: "Bengaluru",
+        state: "Karnataka",
+        country: "India",
+        pinCode: "560001",
+        locationUrl: "https://maps.google.com/maps?cid=11549840952542248488",
+      },
+      storeCode: "1001",
+      email: "info@proenx.com",
+      storeName: "Proenx UAT Store 1",
+      contactNumber1: "18000000000",
+      contactNumber2: "18000000000",
+      managerContactNumber: "9620921294",
+      storeType: "RESTAURANT",
+      currencyId: "INR",
+      CountryCode: "+91",
+      cinNo: "L98765432109876543210",
+      gstTin: "ABC123DEF456GHI789",
+      fssaiNo: "ABC123DEF456GHI789",
     },
   };
 
@@ -154,9 +184,10 @@ function DigitalInvoiceForm() {
       total: "Total (Rs.)",
       clientId: "Client ID",
       batchId: "Batch ID",
-      mrp: "MRP (Rs.)",
       baseAmount: "Base Amount (Rs.)",
-      netAmount: "Net Amount (Rs.)"
+      mrp: "MRP (Rs.)",
+      netAmount: "Net Amount (Rs.)",
+      paymentReferenceNo: "Payment Reference No"
 
     };
     if (customLabels[fieldName]) return customLabels[fieldName];
@@ -181,8 +212,9 @@ function DigitalInvoiceForm() {
       "orderDateTime",
     ],
     payments: ["mode", "total"],
-    productsData: ["name", "productCode", "quantity", "mrp", "baseAmount", "netAmount"],
+    productsData: ["name", "productCode", "quantity", "mrp","uom", "baseAmount", "netAmount"],
     billFooterData: ["footerInfo"],
+    store: ["storeCode"],
   };
 
   // Validation function
@@ -371,9 +403,10 @@ function DigitalInvoiceForm() {
       description: "",
       productCode: "",
       quantity: 0,
-      mrp: 0, // was unitAmount
-      baseAmount: 0, // was totalAmount
-      netAmount: 0,
+      mrp: 0,
+      uom: "",
+      baseAmount: 0,
+      netAmount: 250,
       hsnCode: "",
       discount: 0,
       taxes: {
@@ -466,12 +499,13 @@ function DigitalInvoiceForm() {
 
     const apiUrl =
       "https://testapi.pinelabs.com/v1/billing-integration/qr-payments/transactions/digital-invoice-v2/create";
+      //"http://localhost:9098/v1/billing-integration/qr-payments/transactions/digital-invoice-v2/create";
 
     // Construct the headers
     const headers = {
-      Authorization: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.eyJleHAiOjE3NjE1NjMyMTksImlhdCI6MTc0NjAxMTIxOSwianRpIjoiMDdhZjZkMDYtZTM1ZC00ZjEwLWE2OTQtM2ZmMDFiNTMyMDYzIiwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eXRlc3QucGluZWxhYnMuY29tL3JlYWxtcy9waW5lbGFicyIsInN1YiI6IjhmNzJlZjBiLTI0ZTMtNDQwZi1iZmQzLTExMTVhMDhkZjBiZCIsInR5cCI6IkJlYXJlciIsImF6cCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSIsImFjciI6IjEiLCJzY29wZSI6ImZldGNoLnBpbmUub25lLnRyYW5zYWN0aW9uLkdFVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5QT1NUIHYxLmJpbGxpbmctaW50ZWdyYXRpb24ucXItcGF5bWVudHMudHJhbnNhY3Rpb25zLmRpZ2l0YWwtaW52b2ljZS12Mi5jcmVhdGUuUE9TVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5HRVQgYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuY2FuY2VsLlBPU1Qgb2ZmbGluZV9hY2Nlc3MgdjEuYmlsbGluZy1pbnRlZ3JhdGlvbi5xci1wYXltZW50cy50cmFuc2FjdGlvbnMuZGlnaXRhbC1pbnZvaWNlLXYxLmNyZWF0ZS5QT1NUIiwiY2xpZW50SG9zdCI6IjExNS4xMTAuMTQxLjI0MiIsImV4dElkIjoiMjAxNSIsIk1lcmNoYW50SWQiOiIyMDE1IiwiY2xpZW50QWRkcmVzcyI6IjExNS4xMTAuMTQxLjI0MiIsImNsaWVudF9pZCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSJ9.h8fXECFyq81ADlaXotGBCEi9faW8Qo8eFzw4TXYiRIpdkef-cHTqOlcce7nqADJOTOu-2oU5c_RVIIGTNeiLYw",
+      Authorization: "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJTYlBZU2ZJOS04bklWczl3Xy1Fa3RVdWNVaURNdUZiMGM5bkpVM3hhYzdBIn0.eyJleHAiOjE3NjQ2NjI1MDksImlhdCI6MTc0OTExMDUwOSwianRpIjoiNzEwN2M5OGQtZDJkYy00ZTk4LThmZDgtZDA5YzhkYTAzZmVlIiwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eXRlc3QucGluZWxhYnMuY29tL3JlYWxtcy9waW5lbGFicyIsInN1YiI6IjhmNzJlZjBiLTI0ZTMtNDQwZi1iZmQzLTExMTVhMDhkZjBiZCIsInR5cCI6IkJlYXJlciIsImF6cCI6Ik1lcmNoYW50QmlsbGluZ1NlcnZfMjAxNSIsImFjciI6IjEiLCJzY29wZSI6ImZldGNoLnBpbmUub25lLnRyYW5zYWN0aW9uLkdFVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5QT1NUIHYxLmJpbGxpbmctaW50ZWdyYXRpb24ucXItcGF5bWVudHMudHJhbnNhY3Rpb25zLmRpZ2l0YWwtaW52b2ljZS12Mi5jcmVhdGUuUE9TVCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5HRVQgdHJhbnNhY3Rpb25fcmVhZCBiaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5jYW5jZWwuUE9TVCBvZmZsaW5lX2FjY2VzcyB2MS5iaWxsaW5nLWludGVncmF0aW9uLnFyLXBheW1lbnRzLnRyYW5zYWN0aW9ucy5kaWdpdGFsLWludm9pY2UtdjEuY3JlYXRlLlBPU1QiLCJjbGllbnRIb3N0IjoiNjkuNDguMjM2LjczIiwiZXh0SWQiOiIyMDE1IiwiTWVyY2hhbnRJZCI6IjIwMTUiLCJjbGllbnRBZGRyZXNzIjoiNjkuNDguMjM2LjczIiwiY2xpZW50X2lkIjoiTWVyY2hhbnRCaWxsaW5nU2Vydl8yMDE1In0.ZhmSGkrfv8VoxJiyquwGUGCAA-GR0XMcKvJdseot-oJ7Etx_qa-JEyOzT41lAGScnv14nCbjg6wfetOLLZTWuQ",
       "Content-Type": "application/json",
-      "correlation-id": "123455",
+      "correlation-id": "123",
     };
 
     // Log the final curl command
@@ -660,6 +694,42 @@ curl --location '${apiUrl}' \\
                       />
                     </div>
                   );
+                  // Add specific handling for eReceiptOpted and printOpted
+                    if (key === "eReceiptOpted" || key === "printOpted") {
+                      return (
+                        <div key={key} className="form-field">
+                          <label className="field-label">{formatFieldName(key)}</label>
+                          <select
+                            value={formData[section][key]}
+                            onChange={(e) => handleChange(e, section, key)}
+                            className="field-input"
+                          >
+                            <option value={true}>Yes</option>
+                            <option value={false}>No</option>
+                          </select>
+                        </div>
+                      );
+                    }
+
+                    // Mark label with * if mandatory
+                    const isMandatory =
+                      (mandatoryFields[section] && mandatoryFields[section].includes(key)) ||
+                      false;
+
+                    return (
+                      <div key={key} className="form-field">
+                        <label className="field-label">
+                          {formatFieldName(key)}
+                          {isMandatory && <span style={{ color: "red" }}> *</span>}
+                        </label>
+                        <input
+                          type="text"
+                          value={formData[section][key]}
+                          onChange={(e) => handleChange(e, section, key)}
+                          className="field-input"
+                        />
+                      </div>
+                    );
                 }
                 // Mark label with * if mandatory
                 const isMandatory =
@@ -732,6 +802,19 @@ curl --location '${apiUrl}' \\
                       className="field-input"
                     />
                   </div>
+                  
+                   <div className="form-field">
+                    <label className="field-label">{formatFieldName("paymentReferenceNo")}</label>
+                    <input
+                      type="text"
+                      value={payment.paymentReferenceNo}
+                      onChange={(e) =>
+                        handleChange(e, "orderDetails", "paymentReferenceNo", index, "payments")
+                      }
+                      className="field-input"
+                    />
+                  </div>
+                  
                 </div>
               ))}
             </div>
@@ -780,6 +863,49 @@ curl --location '${apiUrl}' \\
               </div>
             </div>
           )}
+        </>
+      );
+    }
+    
+    if (section === "store") {
+      return (
+        <>
+          <div className="form-field">
+            <h5>Store Details</h5>
+            <div className="store-details-block">
+              {/* Render Address Fields */}
+              {Object.keys(formData[section].address).map((key) => (
+                <div key={key} className="form-field">
+                  <label className="field-label">{formatFieldName(key)}</label>
+                  <input
+                    type="text"
+                    value={formData[section].address[key]}
+                    onChange={(e) =>
+                      handleChange(e, section, key, null, "address")
+                    }
+                    className="field-input"
+                  />
+                </div>
+              ))}
+
+              {/* Render Other Store Fields */}
+              {Object.keys(formData[section]).map((key) => {
+                if (key === "address") return null; // Skip address (already rendered)
+
+                return (
+                  <div key={key} className="form-field">
+                    <label className="field-label">{formatFieldName(key)}</label>
+                    <input
+                      type="text"
+                      value={formData[section][key]}
+                      onChange={(e) => handleChange(e, section, key)}
+                      className="field-input"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </>
       );
     }
@@ -858,6 +984,12 @@ curl --location '${apiUrl}' \\
         >
           Bill Footer Info
         </button>
+        <button
+          className={`tab-button ${activeTab === "store" ? "active" : ""}`}
+          onClick={() => setActiveTab("store")}
+        >
+          Store Info
+        </button>
       </div>
       <form onSubmit={handleSubmit} className={`form ${popupMessage ? "popup-active" : ""}`}>
         {activeTab === "customerInfo" && (
@@ -874,6 +1006,9 @@ curl --location '${apiUrl}' \\
         )}
         {activeTab === "billFooterData" && (
           <div className="form-section">{renderFields("billFooterData")}</div>
+        )}
+        {activeTab === "store" && (
+          <div className="form-section">{renderFields("store")}</div>
         )}
         <button
           type="submit"

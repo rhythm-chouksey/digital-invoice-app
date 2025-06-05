@@ -30,19 +30,19 @@
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3"
   },
-  "homepage": "https://pinelabs-coreplatform.github.io/Instore_DigitalInvoiceUI",
+  "homepage": "git+https://github.com/rhythm-chouksey/digital-invoice-app.git",
 
   "repository": {
 
     "type": "git",
 
-    "url": "git+https://github.com/PineLabs-CorePlatform/Instore_DigitalInvoiceUI.git"
+    "url": "git+https://github.com/rhythm-chouksey/digital-invoice-app.git"
 
   },
 
   "bugs": {
 
-    "url": "https://github.com/PineLabs-CorePlatform/Instore_DigitalInvoiceUI/issues"
+    "url": "git+https://github.com/rhythm-chouksey/digital-invoice-app.git"
   },
   "browserslist": {
     "production": [
